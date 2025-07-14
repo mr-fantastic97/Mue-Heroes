@@ -1,0 +1,12 @@
+# Node
+node_modules/
+dist/
+.env
+
+# Rust
+target/
+Cargo.lock
+
+# OS
+.DS_Store
+Thumbs.db

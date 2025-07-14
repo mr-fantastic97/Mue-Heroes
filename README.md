@@ -19,13 +19,18 @@ Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to r
 ## 💎 Scoring System μ-Level Points
 
 | μ-Level | Base Points |
-| 15      | 10 pts       |
-| 16      | 25 pts       |
-| 17      | 50 pts       |
-| 18      | 100 pts      |
-| 19+     | 250+ pts     |
+|---------|-------------|
+| 15      | 10 pts      |
+| 16      | 25 pts      |
+| 17      | 50 pts      |
+| 18      | 100 pts     |
+| 19+     | 250+ pts    |
 
-## 🧙 Identity System
+
+
+
+
+## 👤 Identity System
 
 Players “claim” their wallet by signing a message and registering a **Hero Tag**. This allows leaderboard attribution and seasonal tracking.
 
@@ -39,9 +44,9 @@ Players “claim” their wallet by signing a message and registering a **Hero T
 
 ---
 
-## 🧱 Kdapp Architecture — How Müe Works
+## Kdapp Architecture — How Müe Works
 
-It operates in **episodes**:
+It operates in episodes:
 
 
 **Episode 1 — Observation:**  
@@ -54,23 +59,23 @@ It operates in **episodes**:
   Expose read-only leaderboard data via a REST API — serving as a *coordination channel*, not a control layer.
 
 **Episode 4 — Identity:**  
-  Players cryptographically prove wallet ownership by signing a message to register a **Hero Tag**. This eliminates impersonation without relying on accounts.
+  Players cryptographically prove wallet ownership by signing a message to register a Hero Tag. This eliminates impersonation without relying on accounts.
 
 **Episode 5 — Anchoring (Optional):**  
-  Major wins or season summaries can be optionally **anchored to the Kaspa chain**, adding an immutable proof layer to the game without bloating the network.
+  Major wins or season summaries can be optionally anchored to the Kaspa chain, adding an immutable proof layer to the game without bloating the network.
 
 
 Müe Heroes moves away from the traditional model of:
-> ❌ **Traditional Web App:** 
-> App → API → Central Database
 
-> ❌ **Traditional dApp (Smart Contract Model):**  
-> App → Web3 Wallet → Smart Contract  
-> → Chain-bound logic execution  
-> → Expensive gas fees  
+❌ **Traditional Web App:** 
+App → API → Central Database
 
-And instead follows:
-> ✅ Participant → Blockchain → Local Rule Engine → Coordination via HTTP
+❌ **Traditional dApp (Smart Contract Model):**  
+App → Web3 Wallet → Chain-bound logic execution   
+
+
+**And instead follows:**
+ ✅ Participant → Blockchain → Local Rule Engine → Coordination via HTTP
 
 
 
@@ -83,8 +88,8 @@ And instead follows:
 | μ-Observer   | Rust (planned)                    | Listens to block headers via RPC           |
 | Backend API  | Rust + Axum                       | REST server for score submissions & reads  |
 | Frontend UI  | React + Vite + Tailwind CSS       | Dynamic leaderboard + seasonal display     |
-| Wallet Auth  | ECDSA Signature + Hero Tag Claim  | Proves wallet ownership for rankings       |
-| Storage      | JSON Lines (MVP), future DB/Redis | Score log persistence                      |
+| Wallet Auth  | Signature + Hero Tag Claim        | Proves wallet ownership for rankings       |
+| Storage      | JSON Lines                        | Score log persistence                      |
 | Hosting      | GitHub Pages / IPFS (planned)     | Fully decentralized frontend delivery      |
 
 
@@ -92,7 +97,7 @@ And instead follows:
 
 ## 🚀 Why This Matters
 
-- **Free to play** dApp leaderboard systems with no smart contracts or fees — just cryptographic proof  
+- **Free to play** dApp leaderboard systems with no smart contracts or fees, just cryptographic proof  
 - **Creates a meta-game** around the security of the Kaspa network  
 - **Onboards users via fun**, not friction  
 - **Celebrates decentralization** make solo mining something to be sought after & fun !

@@ -70,7 +70,7 @@ Müe Heroes moves away from the traditional model of:
 ❌ **Traditional Web App:** 
 App → API → Central Database
 
-❌ **Traditional dApp (Smart Contract Model):**  
+❌ **Traditional dApp:**  
 App → Web3 Wallet → Chain-bound logic execution   
 
 

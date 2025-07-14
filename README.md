@@ -73,10 +73,8 @@ App → API → Central Database
 ❌ **Traditional dApp:**  
 App → Web3 Wallet → Chain-bound logic execution   
 
-
-**And instead follows:**
- ✅ Participant → Blockchain → Local Rule Engine → Coordination via HTTP
-
+✅ **New Model KdApp:**
+Participant → Blockchain → Local Rule Engine → Coordination via HTTP
 
 
 

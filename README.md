@@ -1,6 +1,6 @@
 # Müe Heroes — Superblock Leaderboard of Legends
 
-Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to rank wallets that mine rare **superblocks** on the Kaspa network (μ-level ≥ 15). This is a fun proof of concept game for the community to enjoy, this game is designed to reward pariticipation over raw hashrate, making it possible for solo miners and low-power devices to acheieve legendary status. 
+Welcome to **Müe Heroes**, a cryptographic leaderboard built to rank wallets that mine rare **superblocks** on the Kaspa network (μ-level ≥ 15). This is a fun proof of concept game for the community to enjoy, this game is designed to reward pariticipation over raw hashrate, making it possible for solo miners and low-power devices to acheieve legendary status. 
 
 ---
 

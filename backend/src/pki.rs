@@ -3,7 +3,6 @@ use std::hash::{Hash, Hasher};
 use std::cmp::Eq; 
 use serde::{Serialize, Deserialize};
 use borsh::{BorshDeserialize, BorshSerialize};
-use crate::pki::PubKey;
 use hex;
 
 #[derive(Clone, PartialEq, Eq, Hash, BorshSerialize, BorshDeserialize, Serialize, Deserialize)]

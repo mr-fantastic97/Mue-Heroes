@@ -29,7 +29,7 @@ Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to r
 
 
 
-## 📆 Seasonal Structure
+**📆 Seasonal Structure**
 
 - **Weekly**: Mini-leaderboard resets to encourage newcomers  
 - **Monthly**: Top 10 archived into “_The Book of Müe_”

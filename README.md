@@ -47,6 +47,7 @@ Players “claim” their wallet by signing a message and registering a **Hero T
 ## 🧠 Kdapp Architecture — How MüE Works
 
 MüE operates in engine managed episodes, where each wallet is treated as its own self-contained game session.  
+
 Events (μ-level blocks) are submitted as commands, and episode logic is applied per wallet.
 
 

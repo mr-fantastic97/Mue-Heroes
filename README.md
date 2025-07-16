@@ -28,18 +28,16 @@ Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to r
 
 
 
-
-
-## 👤 Identity System
-
-Players “claim” their wallet by signing a message and registering a **Hero Tag**. This allows leaderboard attribution and seasonal tracking.
-
----
-
 ## 📆 Seasonal Structure
 
 - **Weekly**: Mini-leaderboard resets to encourage newcomers  
 - **Monthly**: Top 10 archived into “_The Book of Müe_”
+
+---
+
+## 👤 Identity System
+
+Players “claim” their wallet by signing a message and registering a **Hero Tag**. This allows leaderboard attribution and seasonal tracking.
 
 
 ---
@@ -50,8 +48,6 @@ MüE operates in engine managed episodes, where each wallet is treated as its ow
 
 Events (μ-level blocks) are submitted as commands, and episode logic is applied per wallet.
 
-
----
 
 Müe Heroes moves away from the traditional model of:
 

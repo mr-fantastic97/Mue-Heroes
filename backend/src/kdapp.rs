@@ -57,8 +57,12 @@ impl Episode for MueHeroSession {
 }
 
 
-impl MueHeroSession {
+iimpl MueHeroSession {
     pub fn get_score(&self) -> u32 {
         self.game.score
+    }
+
+    pub fn get_rank(&self) -> String {
+        Game::rank_from_score(self.game.score).to_string()
     }
 }

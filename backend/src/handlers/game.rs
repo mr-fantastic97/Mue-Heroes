@@ -7,6 +7,7 @@ use crate::pki::PubKey;
 pub struct Game {
     pub score: u32,
     pub last_update: Option<u64>,
+    pub last_mu: Option<u8>,
 }
 
 /// Commands a player can issue (currently only adds points via μ-level)
@@ -48,7 +49,7 @@ impl Episode for Game {
         }
     }
 
-    /// Handles command execution (e.g., scoring a mined superblock)
+    /// Handles command execution (e.g. scoring a mined superblock)
     fn execute(
         &mut self,
         cmd: &Self::Command,
@@ -73,7 +74,7 @@ impl Episode for Game {
         }
     }
 
-    /// Reverts a command (e.g., on chain reorg)
+    /// Reverts a command (On chain reorg)
     fn rollback(&mut self, rollback: u32) -> bool {
         if self.score >= rollback {
             self.score -= rollback;

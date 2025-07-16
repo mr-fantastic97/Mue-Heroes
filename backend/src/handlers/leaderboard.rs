@@ -8,6 +8,7 @@ use crate::pki::PubKey;
 pub struct LeaderboardEntry {
     wallet: String,
     score: u32,
+    rank: String,
 }
 
 pub async fn get_leaderboard() -> Json<Vec<LeaderboardEntry>> {
@@ -17,6 +18,7 @@ pub async fn get_leaderboard() -> Json<Vec<LeaderboardEntry>> {
         .map(|(wallet, session)| LeaderboardEntry {
             wallet: wallet.to_string(),  // Uses your custom wallet display
             score: session.get_score(),
+            rank: session.get_rank(),
         })
         .collect();
 

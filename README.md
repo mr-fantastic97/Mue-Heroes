@@ -25,7 +25,7 @@ Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to r
 | 🧭 μScout     | μ = 15         | 20 pts         | First discoverers of rare terrain.                      |
 | 🔨 μForged    | μ = 16–17      | 45 pts         | Hardened miners shaped by the chain.                    |
 | 🦁 μLegend    | μ = 18         | 100 pts        | Warriors etched into history.                           |
-| 🧙 μMythic    | μ = 19–20      | 250 pts        | Exceedingly rare—nearly mythic.                         |
+| 🧙 μMythic    | μ = 19–20      | 250 pts        | Exceedingly rare-nearly mythic.                         |
 | 🦍 μHonorius  | μ ≥ 21         | 500+ pts       | “The Honorius Orangutan Elder” Tier — legendary blocks. |
 
 ---

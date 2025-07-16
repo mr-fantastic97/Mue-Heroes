@@ -18,14 +18,17 @@ Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to r
 
 ## 💎 Scoring System μ-Level Points
 
-| μ-Level | Base Points |
-|---------|-------------|
-| 15      | 10 pts      |
-| 16      | 25 pts      |
-| 17      | 50 pts      |
-| 18      | 100 pts     |
-| 19+     | 250+ pts    |
+### 🦸 Müe Heroes — Superblock Tier System
 
+| Tier Name    | μ-Level Range | Points Awarded | Description                                               | 
+|--------------|----------------|----------------|----------------------------------------------------------|
+| 🧭 μScout     | μ = 15         | 20 pts         | First discoverers of rare terrain.                      |
+| 🔨 μForged    | μ = 16–17      | 45 pts         | Hardened miners shaped by the chain.                    |
+| 🦁 μLegend    | μ = 18         | 100 pts        | Warriors etched into history.                           |
+| 🧙 μMythic    | μ = 19–20      | 250 pts        | Exceedingly rare—nearly mythic.                         |
+| 🦍 μHonorius  | μ ≥ 21         | 500+ pts       | “The Honorius Orangutan Elder” Tier — legendary blocks. |
+
+---
 
 
 
@@ -98,6 +101,7 @@ Instead of debating it, we gamified it 👾.
 
 - 🦸 Claim your Hero Tag via frontend
 - 📜 “Book of Müe” HTML archive hosted on IPFS
+- 🔮 +5 pts  Bonus Tier - μOracle Awarded to wallets that *witness* a peer mining a superblock in their DAG-view neighborhood.
 
 ---
 

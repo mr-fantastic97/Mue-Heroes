@@ -44,26 +44,13 @@ Players “claim” their wallet by signing a message and registering a **Hero T
 
 ---
 
-## Kdapp Architecture — How Müe Works
+## 🧠 Kdapp Architecture — How MüE Works
 
-It operates in episodes:
+MüE operates in engine managed episodes, where each wallet is treated as its own self-contained game session.  
+Events (μ-level blocks) are submitted as commands, and episode logic is applied per wallet.
 
 
-**Episode 1 — Observation:**  
-  Listen to the Kaspa network via RPC and detect μ ≥ 15 superblocks in real time.
-
-**Episode 2 — Validation:**  
-  Independently verify each block’s μ-level, ensure uniqueness, calculate score, and log it. No trusted third party required.
-
-**Episode 3 — Distribution:**  
-  Expose read-only leaderboard data via a REST API — serving as a *coordination channel*, not a control layer.
-
-**Episode 4 — Identity:**  
-  Players cryptographically prove wallet ownership by signing a message to register a Hero Tag. This eliminates impersonation without relying on accounts.
-
-**Episode 5 — Anchoring (Optional):**  
-  Major wins or season summaries can be optionally anchored to the Kaspa chain, adding an immutable proof layer to the game without bloating the network.
-
+---
 
 Müe Heroes moves away from the traditional model of:
 

@@ -62,21 +62,6 @@ App → Web3 Wallet → Chain-bound logic execution
 ✅ **New Model KdApp:**
 Participant → Blockchain → Local Rule Engine → Coordination via HTTP
 
-
-
-## Tech Stack Used 
-
-| Layer        | Tech Stack                        | Purpose                                    |
-|--------------|-----------------------------------|--------------------------------------------|
-| Blockchain   | Kaspa RPC / Devnet                | Source of truth for μ-superblocks          |
-| μ-Observer   | Rust (planned)                    | Listens to block headers via RPC           |
-| Backend API  | Rust + Axum                       | REST server for score submissions & reads  |
-| Frontend UI  | React + Vite + Tailwind CSS       | Dynamic leaderboard + seasonal display     |
-| Wallet Auth  | Signature + Hero Tag Claim        | Proves wallet ownership for rankings       |
-| Storage      | JSON Lines                        | Score log persistence                      |
-| Hosting      | GitHub Pages / IPFS (planned)     | Fully decentralized frontend delivery      |
-
-
 ---
 
 ## 🚀 Why This Matters

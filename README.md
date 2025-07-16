@@ -16,9 +16,7 @@ Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to r
 
 ---
 
-## 💎 Scoring System μ-Level Points
-
-### 🦸 Müe Heroes — Superblock Tier System
+## 💎 Scoring System μ-Level Points + Tier System
 
 | Tier Name    | μ-Level Range | Points Awarded | Description                                               | 
 |--------------|----------------|----------------|----------------------------------------------------------|

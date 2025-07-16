@@ -15,7 +15,7 @@ pub async fn get_leaderboard() -> Json<Vec<LeaderboardEntry>> {
     let mut entries: Vec<LeaderboardEntry> = sessions
         .iter()
         .map(|(wallet, session)| LeaderboardEntry {
-            wallet: format!("{:?}", wallet),  // or implement Display
+            wallet: wallet.to_string(),  // Uses your custom wallet display
             score: session.get_score(),
         })
         .collect();

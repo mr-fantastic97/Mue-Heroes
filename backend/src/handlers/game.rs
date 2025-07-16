@@ -9,25 +9,25 @@ pub struct Game {
     pub last_update: Option<u64>,
 }
 
-/// 🧠 GameCommand: Wraps player actions (currently only `AddPoints`)
+/// GameCommand: Wraps player actions (currently only `AddPoints`)
 #[derive(Debug, Clone, BorshSerialize, BorshDeserialize)]
 pub enum GameCommand {
     AddPoints { level: u8 }, // Submit μ-level of mined superblock
 }
 
-/// 🚫 Command errors (e.g., invalid μ-level submitted)
+/// Command errors (e.g., invalid μ-level submitted)
 #[derive(Debug)]
 pub enum GameCommandError {
     InvalidLevel,
 }
 
-/// ✅ Implements Episode logic — each wallet is a self-contained Kdapp instance
+/// Implements Episode logic — each wallet is a self-contained Kdapp instance
 impl Episode for Game {
     type Command = GameCommand;
     type CommandError = GameCommandError;
     type CommandRollback = u32; // We rollback by subtracting awarded points
 
-    /// 🆕 Initializes a fresh Game state
+    /// Initializes a fresh Game state
     fn initialize(_participants: Vec<PubKey>, _metadata: &PayloadMetadata) -> Self {
         Game {
             score: 0,
@@ -35,7 +35,7 @@ impl Episode for Game {
         }
     }
 
-    /// 🚀 Handles incoming commands and updates state
+    /// Handles incoming commands and updates state
     fn execute(
         &mut self,
         cmd: &Self::Command,
@@ -60,7 +60,7 @@ impl Episode for Game {
         }
     }
 
-    /// 🔁 Reverts a previous command (e.g., chain reorg rollback)
+    /// Reverts a previous command (e.g., chain reorg rollback)
     fn rollback(&mut self, rollback: u32) -> bool {
         if self.score >= rollback {
             self.score -= rollback;

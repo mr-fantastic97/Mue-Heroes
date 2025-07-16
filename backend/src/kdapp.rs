@@ -55,3 +55,10 @@ impl Episode for MueHeroSession {
         self.game.rollback(rollback)
     }
 }
+
+
+impl MueHeroSession {
+    pub fn get_score(&self) -> u32 {
+        self.game.score
+    }
+}

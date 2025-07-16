@@ -28,6 +28,7 @@ Welcome to **Müe Heroes**, an experimental cryptographic leaderboard built to r
 
 
 
+
 ## 📆 Seasonal Structure
 
 - **Weekly**: Mini-leaderboard resets to encourage newcomers  
@@ -49,7 +50,7 @@ MüE operates in engine managed episodes, where each wallet is treated as its ow
 Events (μ-level blocks) are submitted as commands, and episode logic is applied per wallet.
 
 
-Müe Heroes moves away from the traditional model of:
+**Müe Heroes moves away from the traditional model of**:
 
 ❌ **Traditional Web App:** 
 App → API → Central Database

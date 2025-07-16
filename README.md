@@ -118,7 +118,7 @@ cd backend
 cargo run
 
 
-## 🤝 Want to Build With Us?
+## 🤝 Want to Build ?
 
 Open an issue, fork the repo, or reach out via Twitter @just_code97.  
-If you're passionate about Kaspa, Kdapps, or designing decentralized experiences — let's build!
+If you're passionate about Kaspa, Kdapps, or designing decentralized experiences - let's build!

@@ -10,9 +10,9 @@ Welcome to **Müe Heroes**, a cryptographic leaderboard built to rank wallets th
 📊 Assigns points based on the μ-level of each superblock mined  
 🏅 Ranks wallets on a dynamic leaderboard based on cumulative score  
 🧠 Applies tier-based logic to classify miners into roles (e.g., μScout, μLegend)  
-📡 Backend logs and anchors each qualifying win via REST API  
+📡 Logs and anchors each qualifying new state
 🖥️ Frontend displays real-time leaderboard and seasonal progress  
-🎮 Creates a game layer on top of Kaspa mining using rarity mechanics  
+🎮 Creates a game layer on top of Kaspa mining
 
 ---
 

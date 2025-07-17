@@ -1,3 +1,3 @@
-fn main():{
-    println!("🚀 Müe Heroes backend starting... ")
+fn main(){
+    println!("🚀 Müe Heroes backend is running...");
 }

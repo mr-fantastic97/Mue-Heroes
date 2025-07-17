@@ -1,0 +1,23 @@
+/* src/App.css */
+
+.app-container {
+  /* Or whatever class/id your main div has */
+  display: flex;
+  flex-direction: column;
+  /* Stack items vertically */
+  align-items: center;
+  /* Center horizontally */
+  justify-content: flex-start;
+  /* Move to the top */
+  min-height: 100vh;
+  /* Make sure the container takes full viewport height */
+  padding-top: 50px;
+  /* Adjust this value to move it further down from the very top */
+  /* Remove or adjust any background-color here */
+}
+
+/* Optional: If you want to center the text itself within its own element */
+h1,
+p {
+  text-align: center;
+}

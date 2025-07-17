@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Müe Heroes</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 2rem;
+      color: #222;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: #666;
+    }
+
+    .leaderboard-box {
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      margin: 0 auto 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 0.75rem;
+      text-align: center;
+      border-bottom: 1px solid #e1e1e1;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .placeholder {
+      color: #bbb;
+      font-style: italic;
+    }
+
+    .button-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .button-section button {
+      padding: 0.6rem 1rem;
+      margin: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s ease-in-out;
+    }
+
+    /* Refresh Button */
+    .refresh-btn {
+      background: #e0f0ff;
+      color: #0077cc;
+    }
+
+    .refresh-btn:hover {
+      background: #cde5ff;
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 119, 204, 0.3);
+    }
+
+    /* History Button */
+    .history-btn {
+      background: #fff3cd;
+      color: #8a6d3b;
+    }
+
+    .history-btn:hover {
+      background: #ffeeba;
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(138, 109, 59, 0.3);
+    }
+
+    /* Join Button */
+    .join-btn {
+      background: #d4edda;
+      color: #3c763d;
+    }
+
+    .join-btn:hover {
+      background: #c3e6cb;
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(60, 118, 61, 0.3);
+    }
+
+    .info-box,
+    .tier-box {
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+      max-width: 1000px;
+      margin: 0 auto 2rem;
+    }
+
+    .info-box h3,
+    .tier-box h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+
+    .info-box p {
+      color: #555;
+    }
+
+    .tier-box table {
+      margin-top: 1rem;
+    }
+
+    .tier-box th,
+    .tier-box td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .tier-box th {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🧙‍♂️ Müe Heroes 🧙‍♀️</h1>
+    <p class="subtitle">The Superblock Leaderboard of Legends</p>
+  </header>
+
+  <!-- 🧾 Leaderboard -->
+  <section class="leaderboard-box">
+    <table>
+      <thead>
+        <tr>
+          <th>🏆 Rank</th>
+          <th>Wallet Tag</th>
+          <th>μ-Level</th>
+          <th>Score</th>
+          <th>Block Height</th>
+          <th>Date Mined</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#1</td>
+          <td class="placeholder">Awaiting Hero...</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+        </tr>
+        <tr>
+          <td>#2</td>
+          <td class="placeholder">Awaiting Hero...</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+        </tr>
+        <tr>
+          <td>#3</td>
+          <td class="placeholder">Awaiting Hero...</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+        </tr>
+        <tr>
+          <td>#4</td>
+          <td class="placeholder">Awaiting Hero...</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+        </tr>
+        <tr>
+          <td>#5</td>
+          <td class="placeholder">Awaiting Hero...</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+          <td class="placeholder">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 🔁 Buttons -->
+  <section class="button-section">
+    <button class="refresh-btn">🔄 Refresh Leaderboard</button>
+    <button class="history-btn">📖 View Historical Heroes</button>
+    <button class="join-btn">🌿 How to Join?</button>
+  </section>
+
+  <!-- 💡 Fun Fact -->
+  <section class="info-box">
+    <h3>💡 Fun Fact</h3>
+    <p>
+      Any wallet that mines a μ ≥ 15 block is auto-entered.<br />
+      Join our Discord to register your tag and earn digital trophies!
+    </p>
+  </section>
+
+  <!-- 📊 Tier System -->
+  <section class="tier-box">
+    <h3>🧙 Scoring System μ-Level Points + Tier System</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>🏅 Tier Name</th>
+          <th>μ-Level Range</th>
+          <th>Points Awarded</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🪙 μScout</td>
+          <td>μ = 15</td>
+          <td>20 pts</td>
+          <td>First discoverers of rare terrain.</td>
+        </tr>
+        <tr>
+          <td>⛏️ μForged</td>
+          <td>μ = 16–17</td>
+          <td>45 pts</td>
+          <td>Hardened miners shaped by the chain.</td>
+        </tr>
+        <tr>
+          <td>🦁 μLegend</td>
+          <td>μ = 18</td>
+          <td>100 pts</td>
+          <td>Warriors etched into history.</td>
+        </tr>
+        <tr>
+          <td>🐉 μMythic</td>
+          <td>μ = 19–20</td>
+          <td>250 pts</td>
+          <td>Exceedingly rare—nearly mythic.</td>
+        </tr>
+        <tr>
+          <td>🧙‍♂️ μHonorius</td>
+          <td>μ ≥ 21</td>
+          <td>500+ pts</td>
+          <td>"The Honorius Orangutan Elder" Tier.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</body>
+
+</html>

@@ -19,7 +19,7 @@ Welcome to **Müe Heroes**, a cryptographic leaderboard built to rank wallets th
 ## 💎 Scoring System μ-Level Points + Tier System
 
 | Tier Name    | μ-Level Range | Points Awarded | Description                                               | 
-|--------------|----------------|----------------|----------------------------------------------------------|
+|--------------|----------------|-----------------|----------------------------------------------------------|
 | 🧭 μScout     | μ = 15         | 20 pts         | First discoverers of rare terrain.                      |
 | 🔨 μForged    | μ = 16–17      | 45 pts         | Hardened miners shaped by the chain.                    |
 | 🦁 μLegend    | μ = 18         | 100 pts        | Warriors etched into history.                           |

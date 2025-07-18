@@ -2,6 +2,9 @@ use crate::episode::{Episode, EpisodeError, PayloadMetadata};
 use crate::game::{Game, GameCommand, GameCommandError}; // import Game engine
 use crate::pki::PubKey;
 use crate::types::SuperblockEvent; // Your custom μ-level event type
+use crate::utils::merkle::merkle::{verify_merkle_proof, compute_leaf_from_wallet};
+
+
 
 
 /// Kdapp state per wallet — wraps Game logic internally
@@ -31,17 +34,29 @@ impl Episode for MueHeroSession {
     }
 
     /// Routes the SuperblockEvent into the Game logic
-    fn execute(
+   fn execute(
         &mut self,
-        cmd: &Self::Command,           
+        cmd: &Self::Command,
         _auth: Option<PubKey>,
         metadata: &PayloadMetadata,
     ) -> Result<Self::CommandRollback, EpisodeError<Self::CommandError>> {
-        // Convert raw μ-level into GameCommand + decide whether to add full or witness points
-        let game_cmd = if cmd.witness_miner {
-            GameCommand::AddPoints { level: cmd.mu_level }
+        let game_cmd = if cmd.is_witness {
+            // Verify Merkle proof for witness miner before awarding points
+            if let (Some(root), Some(proof), Some(index), Some(auth)) =
+                (&cmd.merkle_root, &cmd.proof, cmd.witness_index, _auth)
+            {
+                let leaf = compute_leaf_from_wallet(auth);
+                if verify_merkle_proof(leaf, proof.clone(), *root, index) {
+                    GameCommand::WitnessPoints { level: cmd.mu_level }
+                } else {
+                    return Err(EpisodeError::InternalError("Invalid Merkle witness proof".into()));
+                }
+            } else {
+                return Err(EpisodeError::InternalError("Missing Merkle data for witness miner".into()));
+            }
         } else {
-            GameCommand::WitnessPoints { level: cmd.mu_level }
+            // Full credit for superblock miner
+            GameCommand::AddPoints { level: cmd.mu_level }
         };
 
         // Forward to inner game logic

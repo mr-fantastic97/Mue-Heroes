@@ -14,6 +14,7 @@ pub struct Game {
 #[derive(Debug, Clone, BorshSerialize, BorshDeserialize)]
 pub enum GameCommand {
     AddPoints { level: u8 },
+    WitnessPoints { level: u8 },
 }
 
 /// Command-specific errors
@@ -51,28 +52,39 @@ impl Episode for Game {
 
     /// Handles command execution (e.g. scoring a mined superblock)
     fn execute(
-        &mut self,
-        cmd: &Self::Command,
-        _auth: Option<PubKey>,
-        metadata: &PayloadMetadata,
-    ) -> Result<Self::CommandRollback, EpisodeError<Self::CommandError>> {
-        match cmd {
-            GameCommand::AddPoints { level } => {
-                let points = match level {
-                    15 => 20,         // μScout
-                    16..=17 => 45,    // μForged
-                    18 => 100,        // μLegend
-                    19..=20 => 250,   // μMythic
-                    21..=u8::MAX => 500, // μHonorius
-                    _ => return Err(EpisodeError::CommandError(GameCommandError::InvalidLevel)),
-                };
+    &mut self,
+    cmd: &Self::Command,
+    _auth: Option<PubKey>,
+    metadata: &PayloadMetadata,
+) -> Result<Self::CommandRollback, EpisodeError<Self::CommandError>> {
+    match cmd {
+        GameCommand::AddPoints { level } => {
+            let points = match level {
+                15 => 20,         // μScout
+                16..=17 => 45,    // μForged
+                18 => 100,        // μLegend
+                19..=20 => 250,   // μMythic
+                21..=u8::MAX => 500, // μHonorius
+                _ => return Err(EpisodeError::CommandError(GameCommandError::InvalidLevel)),
+            };
 
-                self.score += points;
+            self.score += points;
+            self.last_update = Some(metadata.accepting_time);
+            Ok(points)
+        },
+
+        GameCommand::WitnessPoints { level } => {
+            if *level >= 15 {
+                self.score += 5; // μOracle reward
                 self.last_update = Some(metadata.accepting_time);
-                Ok(points)
+                Ok(5)
+            } else {
+                Err(EpisodeError::CommandError(GameCommandError::InvalidLevel))
             }
-        }
+        },
     }
+}
+
 
     /// Reverts a command (On chain reorg)
     fn rollback(&mut self, rollback: u32) -> bool {

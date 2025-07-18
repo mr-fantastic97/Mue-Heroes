@@ -47,6 +47,7 @@ impl Episode for Game {
         Game {
             score: 0,
             last_update: None,
+            last_mu: None,
         }
     }
 

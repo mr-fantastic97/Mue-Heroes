@@ -7,6 +7,7 @@ use once_cell::sync::Lazy;
 use crate::pki::PubKey;
 use crate::kdapp::MueHeroSession;
 pub mod pki;
+pub mod types;
 
 pub static SESSIONS: Lazy<Mutex<HashMap<PubKey, MueHeroSession>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));

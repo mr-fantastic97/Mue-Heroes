@@ -33,12 +33,16 @@ impl Episode for MueHeroSession {
     /// Routes the SuperblockEvent into the Game logic
     fn execute(
         &mut self,
-        cmd: &Self::Command,            // e.g. SuperblockEvent { mu_level: 17 }
+        cmd: &Self::Command,           
         _auth: Option<PubKey>,
         metadata: &PayloadMetadata,
     ) -> Result<Self::CommandRollback, EpisodeError<Self::CommandError>> {
-        // Convert raw μ-level into GameCommand
-        let game_cmd = GameCommand::AddPoints { level: cmd.mu_level };
+        // Convert raw μ-level into GameCommand + decide whether to add full or witness points
+        let game_cmd = if cmd.witness_miner {
+            GameCommand::AddPoints { level: cmd.mu_level }
+        } else {
+            GameCommand::WitnessPoints { level: cmd.mu_level }
+        };
 
         // Forward to inner game logic
         self.game
@@ -57,7 +61,7 @@ impl Episode for MueHeroSession {
 }
 
 
-iimpl MueHeroSession {
+impl MueHeroSession {
     pub fn get_score(&self) -> u32 {
         self.game.score
     }

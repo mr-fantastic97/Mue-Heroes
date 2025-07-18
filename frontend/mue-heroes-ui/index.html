@@ -173,7 +173,7 @@
           <th>Date Mined</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="leaderboard-body">
         <tr>
           <td>#1</td>
           <td class="placeholder">Awaiting Hero...</td>
@@ -288,6 +288,61 @@
       </tbody>
     </table>
   </section>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const tbody = document.getElementById("leaderboard-body");
+      const refreshButton = document.querySelector(".refresh-btn");
+      const historyButton = document.querySelector(".history-btn");
+      const joinButton = document.querySelector(".join-btn");
+
+      const formatDate = (isoDate) => {
+        const date = new Date(isoDate);
+        return date.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      };
+
+      const refreshLeaderboard = () => {
+        fetch("/leaderboard")
+          .then(res => res.json())
+          .then(data => {
+            tbody.innerHTML = "";
+            data.forEach(entry => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>#${entry.rank}</td>
+                <td>${entry.wallet}</td>
+                <td>${entry.mu_level}</td>
+                <td>${entry.score}</td>
+                <td>${entry.block_height}</td>
+                <td>${formatDate(entry.date_mined)}</td>
+              `;
+              tbody.appendChild(row);
+            });
+          })
+          .catch(err => console.error("Error loading leaderboard:", err));
+      };
+
+      const showHistoricalHeroes = () => {
+        alert("Feature coming soon: View historical hero blocks and score history.");
+      };
+
+      const showHowToJoin = () => {
+        alert("To join Müe Heroes, mine a superblock (μ ≥ 15) using your Kaspa wallet!");
+      };
+
+      refreshButton.addEventListener("click", refreshLeaderboard);
+      historyButton.addEventListener("click", showHistoricalHeroes);
+      joinButton.addEventListener("click", showHowToJoin);
+
+      refreshLeaderboard(); // Load leaderboard on page load
+      setInterval(refreshLeaderboard, 15000); // every 15 seconds
+
+    });
+  </script>
+
 </body>
 
 </html>

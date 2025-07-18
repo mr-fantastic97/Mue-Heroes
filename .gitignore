@@ -10,3 +10,14 @@ Cargo.lock
 # OS
 .DS_Store
 Thumbs.db
+
+# Node / JS (if using frontend tooling)
+/node_modules
+/dist
+/.vite
+/.DS_Store
+
+# Logs
+*.log
+
+

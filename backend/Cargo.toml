@@ -1,9 +1,27 @@
 [package]
 name = "backend"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-hex = "0.4"
+# === Web Framework ===
+axum = "0.8.4"
+tokio = { version = "1.46", features = ["full"] }
+tower = "0.4"
+tower-http = { version = "0.4.4", features = ["cors"] }
+
+# === Serialization ===
 serde = { version = "1.0", features = ["derive"] }
 borsh = "0.10"
+
+# === Utilities ===
+hex = "0.4"
+rand = "0.8"
+
+# === Networking ===
+reqwest = { version = "0.11", features = ["json", "blocking"] }
+chrono = "0.4.41"
+
+[[bin]]
+name = "simulate_submissions"
+path = "src/bin/simulate_submissions.rs"

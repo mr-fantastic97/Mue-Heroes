@@ -28,6 +28,22 @@ fn generate_wallets(n: usize) -> Vec<String> {
         .collect()
 }
 
+//  Tiered scoring logic
+fn calculate_score_and_tier(mu_level: u8, event_type: &str) -> (u32, &'static str) {
+    if event_type == "witness" {
+        return (5, "μOracle");
+    }
+
+    match mu_level {
+        15 => (50, "μScout"),
+        16..=17 => (75, "μForged"),
+        18 => (100, "μLegend"),
+        19..=20 => (250, "μMythic"),
+        21..=u8::MAX => (500, "μHonorius"),
+        _ => (0, "Unknown"),
+    }
+}
+
 fn simulate_submission(
     client: &Client,
     wallet: &str,
@@ -36,11 +52,8 @@ fn simulate_submission(
     block_height: u64,
     date_mined: &str,
 ) {
-    let score = if event_type == "mined" {
-        mu_level as u32
-    } else {
-        5
-    };
+    // Use new tiered scoring
+    let (score, tier) = calculate_score_and_tier(mu_level, event_type);
 
     let payload = Submission {
         wallet: wallet.to_string(),
@@ -54,9 +67,9 @@ fn simulate_submission(
     let res = client.post(BACKEND_URL).json(&payload).send();
 
     match res {
-        Ok(resp) => println!(
-            "✅ Submitted [{}] for {} → μ = {}, Score = {}",
-            event_type, wallet, mu_level, score
+        Ok(_) => println!(
+            "✅ Submitted [{}] for {} → μ = {}, Tier = {}, Score = {}",
+            event_type, wallet, mu_level, tier, score
         ),
         Err(e) => eprintln!("❌ Failed for {}: {:?}", wallet, e),
     }
@@ -71,13 +84,13 @@ fn main() {
         round += 1;
         println!("⏳ Simulating block round #{}...", round);
 
-        // Random wallet count between 1 and 6
+        // Generate 1 to 6 wallets
         let wallet_count = thread_rng().gen_range(1..=6);
         let mut wallets = generate_wallets(wallet_count);
         wallets.shuffle(&mut thread_rng());
 
-        // Simulate μ-level
-        let d_actual = thread_rng().gen_range(1.0..(t / 100.0));
+        //  Simulate μ-level
+        let d_actual = thread_rng().gen_range(1.0..(t / 850.0)); // Adjust difficulty spread
         let mu_level = (t / d_actual).log2().floor() as u8;
 
         if mu_level < 15 {
@@ -86,7 +99,7 @@ fn main() {
             let block_height = thread_rng().gen_range(500_000..1_000_000);
             let date_mined = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
 
-            // Pick one wallet as miner
+            // 👷 Miner
             let miner = &wallets[0];
             simulate_submission(
                 &client,
@@ -97,7 +110,7 @@ fn main() {
                 &date_mined,
             );
 
-            // Randomly select a subset of the rest as witnesses
+            // 🧾 Witnesses
             let witnesses = &wallets[1..];
             if !witnesses.is_empty() {
                 let witness_count = thread_rng().gen_range(1..=witnesses.len());
@@ -116,7 +129,7 @@ fn main() {
             }
         }
 
-        // Sleep before next block
-        thread::sleep(Duration::from_secs(20));
+      //simulated Kaspa block time
+        thread::sleep(Duration::from_millis(1000));
     }
 }

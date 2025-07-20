@@ -1,7 +1,8 @@
-use rand::{distributions::Alphanumeric, thread_rng, Rng};
+use rand::{distributions::Alphanumeric, seq::SliceRandom, thread_rng, Rng};
 use reqwest::blocking::Client;
 use serde::Serialize;
 use chrono::prelude::*;
+use std::{thread, time::Duration};
 
 const BACKEND_URL: &str = "http://127.0.0.1:8000/submit"; // Update if needed
 
@@ -63,42 +64,59 @@ fn simulate_submission(
 
 fn main() {
     let client = Client::new();
-    let wallets = generate_wallets(4);
     let t: f64 = 2_f64.powi(256);
+    let mut round = 0;
 
-    for round in 0..5 {
+    loop {
+        round += 1;
+        println!("⏳ Simulating block round #{}...", round);
+
+        // Random wallet count between 1 and 6
+        let wallet_count = thread_rng().gen_range(1..=6);
+        let mut wallets = generate_wallets(wallet_count);
+        wallets.shuffle(&mut thread_rng());
+
+        // Simulate μ-level
         let d_actual = thread_rng().gen_range(1.0..(t / 100.0));
         let mu_level = (t / d_actual).log2().floor() as u8;
 
         if mu_level < 15 {
-            println!("⏭ Round {} skipped (μ = {}) — Not eligible", round, mu_level);
-            continue;
-        }
+            println!("⏭ Skipped (μ = {}) — Not eligible", mu_level);
+        } else {
+            let block_height = thread_rng().gen_range(500_000..1_000_000);
+            let date_mined = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
 
-        let block_height = thread_rng().gen_range(500_000..1_000_000);
-        let date_mined = Utc::now().format("%Y-%m-%d %H:%M:%S").to_string();
-
-        // Choose first wallet to mine the block
-        let miner = &wallets[0];
-        simulate_submission(
-            &client,
-            miner,
-            "mined",
-            mu_level,
-            block_height,
-            &date_mined,
-        );
-
-        // The rest are witnesses
-        for witness in &wallets[1..] {
+            // Pick one wallet as miner
+            let miner = &wallets[0];
             simulate_submission(
                 &client,
-                witness,
-                "witness",
+                miner,
+                "mined",
                 mu_level,
                 block_height,
                 &date_mined,
             );
+
+            // Randomly select a subset of the rest as witnesses
+            let witnesses = &wallets[1..];
+            if !witnesses.is_empty() {
+                let witness_count = thread_rng().gen_range(1..=witnesses.len());
+                let selected_witnesses = &witnesses[..witness_count];
+
+                for witness in selected_witnesses {
+                    simulate_submission(
+                        &client,
+                        witness,
+                        "witness",
+                        mu_level,
+                        block_height,
+                        &date_mined,
+                    );
+                }
+            }
         }
+
+        // Sleep before next block
+        thread::sleep(Duration::from_secs(20));
     }
 }

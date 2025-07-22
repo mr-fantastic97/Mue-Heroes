@@ -1,47 +1,37 @@
 use crate::episode::{Episode, EpisodeError, PayloadMetadata};
-use crate::game::{Game, GameCommand, GameCommandError}; // import Game engine
+use crate::game::{Game, GameCommand, GameCommandError};
 use crate::pki::PubKey;
-use crate::types::SuperblockEvent; // Your custom μ-level event type
+use crate::types::SuperblockEvent;
 use crate::utils::merkle::merkle::{verify_merkle_proof, compute_leaf_from_wallet};
 
-
-
-
-/// Kdapp state per wallet — wraps Game logic internally
 #[derive(Default, Clone)]
 pub struct MueHeroSession {
-    game: Game, // 🧩 internally stores the scoring engine
+    game: Game,
 }
 
-/// Error wrapper to align with the Episode trait
 #[derive(Debug)]
 pub enum MueError {
     Game(GameCommandError),
 }
 
-
-/// Implements Episode for MueHeroSession (1 wallet = 1 game session)
 impl Episode for MueHeroSession {
     type Command = SuperblockEvent;
     type CommandError = MueError;
     type CommandRollback = u32;
 
-    /// New game session when wallet mines its first μ-level block
     fn initialize(_participants: Vec<PubKey>, _metadata: &PayloadMetadata) -> Self {
         Self {
             game: Game::default(),
         }
     }
 
-    /// Routes the SuperblockEvent into the Game logic
-   fn execute(
+    fn execute(
         &mut self,
         cmd: &Self::Command,
         _auth: Option<PubKey>,
         metadata: &PayloadMetadata,
     ) -> Result<Self::CommandRollback, EpisodeError<Self::CommandError>> {
         let game_cmd = if cmd.is_witness {
-            // Verify Merkle proof for witness miner before awarding points
             if let (Some(root), Some(proof), Some(index), Some(auth)) =
                 (&cmd.merkle_root, &cmd.proof, cmd.witness_index, _auth)
             {
@@ -55,11 +45,9 @@ impl Episode for MueHeroSession {
                 return Err(EpisodeError::InternalError("Missing Merkle data for witness miner".into()));
             }
         } else {
-            // Full credit for superblock miner
             GameCommand::AddPoints { level: cmd.mu_level }
         };
 
-        // Forward to inner game logic
         self.game
             .execute(&game_cmd, _auth, metadata)
             .map_err(|e| match e {
@@ -68,13 +56,10 @@ impl Episode for MueHeroSession {
             })
     }
 
-
-    /// Reverts a score if the μ-level block was reorged
     fn rollback(&mut self, rollback: u32) -> bool {
         self.game.rollback(rollback)
     }
 }
-
 
 impl MueHeroSession {
     pub fn get_score(&self) -> u32 {

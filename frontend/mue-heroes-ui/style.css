@@ -1,0 +1,144 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 2rem;
+    color: #222;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+    color: #666;
+}
+
+.leaderboard-box {
+    background: white;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 0 auto 2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.placeholder {
+    color: #bbb;
+    font-style: italic;
+}
+
+.button-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.button-section button {
+    padding: 0.6rem 1rem;
+    margin: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Refresh Button */
+.refresh-btn {
+    background: #e0f0ff;
+    color: #0077cc;
+}
+
+.refresh-btn:hover {
+    background: #cde5ff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 119, 204, 0.3);
+}
+
+/* History Button */
+.history-btn {
+    background: #fff3cd;
+    color: #8a6d3b;
+}
+
+.history-btn:hover {
+    background: #ffeeba;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(138, 109, 59, 0.3);
+}
+
+/* Join Button */
+.join-btn {
+    background: #d4edda;
+    color: #3c763d;
+}
+
+.join-btn:hover {
+    background: #c3e6cb;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(60, 118, 61, 0.3);
+}
+
+.info-box,
+.tier-box {
+    background: white;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+    max-width: 1000px;
+    margin: 0 auto 2rem;
+}
+
+.info-box h3,
+.tier-box h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+
+.info-box p {
+    color: #555;
+}
+
+.tier-box table {
+    margin-top: 1rem;
+}
+
+.tier-box th,
+.tier-box td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.tier-box th {
+    background-color: #f0f0f0;
+}

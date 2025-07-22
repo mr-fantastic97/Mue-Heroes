@@ -24,15 +24,19 @@ pub enum GameCommandError {
 }
 
 impl Game {
-    /// Maps μ-levels to leaderboard titles (used in display layers)
-    pub fn rank_from_level(level: u8) -> &'static str {
-        match level {
+    /// Returns the Tier label based on μ-level and role (mined or witnessed)
+    pub fn rank_from_level(mu_level: u8, is_mined: bool) -> &'static str {
+        if !is_mined {
+            return "🧾 μOracle"; // For μ-level witnesses
+        }
+
+        match mu_level {
             15 => "🧭 μScout",
             16..=17 => "🔨 μForged",
             18 => "🦁 μLegend",
             19..=20 => "🧙 μMythic",
             21..=u8::MAX => "🦍 μHonorius",
-            _ => "❓ Unknown", // Defensive fallback for unexpected μ-levels
+            _ => "❓ Unknown",
         }
     }
 }

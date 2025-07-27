@@ -1,4 +1,4 @@
-use rand::{distributions::Alphanumeric, seq::SliceRandom, thread_rng, Rng};
+use rand::{seq::SliceRandom, thread_rng, Rng};
 use reqwest::blocking::Client;
 use serde::Serialize;
 use chrono::prelude::*;
@@ -17,14 +17,18 @@ struct Submission {
 }
 
 fn generate_wallets(n: usize) -> Vec<String> {
-    (0..n)
-        .map(|_| {
-            thread_rng()
-                .sample_iter(&Alphanumeric)
-                .take(16)
-                .map(char::from)
-                .collect()
-        })
+    let samples = vec![
+        "kaspa:qz6wqg...8upg".to_string(),
+        "kaspa:qq53sd...v83z".to_string(),
+        "kaspa:sdmsdf...0qq3".to_string(),
+        "kaspa:frfnbb...0xxp".to_string(),
+        "kaspa:qrucxa...2dvk".to_string(),
+        "kaspa:qrusdc...03cv".to_string(),
+    ];
+
+    samples
+        .choose_multiple(&mut thread_rng(), n)
+        .cloned()
         .collect()
 }
 

@@ -32,6 +32,14 @@ function formatDate(isoDate) {
     });
 }
 
+//Truncate Wallet
+function truncateWallet(wallet) {
+    if (!wallet) return "";
+    if (wallet.length <= 22) return wallet;
+    return wallet.slice(0, 14) + "..." + wallet.slice(-6); // Can tweak as needed for added kns functionality. 
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const tbody = document.getElementById("leaderboard-body");
     const refreshButton = document.querySelector(".refresh-btn");
@@ -71,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         row.innerHTML = `
                             <td>${rankDisplay}</td>
-                            <td>${entry.wallet}</td>
+                            <td class="wallet-cell" title="${entry.wallet}">${truncateWallet(entry.wallet)}</td>
                             <td>${muText}</td>
                             <td>${entry.score}</td>
                             <td>${entry.block_height ?? "—"}</td>

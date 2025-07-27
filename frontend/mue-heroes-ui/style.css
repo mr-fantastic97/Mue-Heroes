@@ -33,6 +33,8 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: auto;
+    /* 🛠️ CHANGED: from fixed → auto (lets the table flex) */
 }
 
 th,
@@ -142,3 +144,32 @@ tr:last-child td {
 .tier-box th {
     background-color: #f0f0f0;
 }
+
+
+/* ✅ Final Wallet Truncation — INLINE BLOCK FIX */
+.wallet-cell {
+    display: inline-block;
+    /* 🆕 Essential for constraining inside <td> */
+    max-width: 200px;
+    /* 🆕 Adjust as needed for truncation */
+    overflow: hidden;
+    /* 🆕 Hides overflow content */
+    white-space: nowrap;
+    /* 🆕 Prevents wrapping */
+    text-overflow: ellipsis;
+    /* 🆕 Shows "..." at the end */
+    vertical-align: middle;
+    /* 🆕 Optional, centers vertically with emoji */
+}
+
+/* 🧹 REMOVE this conflicting block — it's overridden by the inline-block fix */
+/*
+th:nth-child(2),
+td.wallet-cell {
+    max-width: 220px;
+    width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+*/

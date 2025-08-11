@@ -1,68 +1,54 @@
+// backend/src/main.rs
+mod handlers;
+mod engine;
+
 use axum::{
-    extract::{State, Json},
-    Router,
     routing::{get, post},
-    http::Method,
+    Router,
 };
 use tower_http::cors::{CorsLayer, Any};
 use std::{
     net::SocketAddr,
-    sync::{Arc, Mutex},
+    sync::{Arc, RwLock},
 };
-use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Submission {
-    pub wallet: String,
-    pub score: u32,
-    pub mu_level: u8,
-    pub block_height: u64,
-    pub date_mined: String,
-    pub event_type: String, // "mined" or "witness"
-}
-
-type AppState = Arc<Mutex<Vec<Submission>>>;
+use handlers::submission::{
+    handle_submission,
+    SharedState,
+    Submission,
+    load_submissions_from_jsonl,
+};
+use handlers::leaderboard::get_leaderboard;
+use handlers::events::get_events;
 
 #[tokio::main]
 async fn main() {
-    // ✅ Allow Vite frontend access
+    // Load env (for MUE_SECRET)
+    dotenvy::dotenv().ok();
+
+    // CORS: wide-open for now (ok for local dev)
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any)
         .allow_headers(Any);
 
-    // ✅ Shared state: in-memory submission store
-    let state: AppState = Arc::new(Mutex::new(Vec::new()));
+    // Preload prior submissions from JSONL (if present)
+    let initial: Vec<Submission> = load_submissions_from_jsonl("logs/submissions.jsonl");
+    let state: SharedState = Arc::new(RwLock::new(initial));
 
+    // Build routes and attach shared state
     let app = Router::new()
-        .route("/submit", post(handle_submit))
-        .route("/leaderboard", get(handle_leaderboard))
-        .with_state(state)
+        .route("/submit", post(handle_submission))
+        .route("/leaderboard", get(get_leaderboard))
+        .route("/events", get(get_events))
+        .with_state(state.clone())
         .layer(cors);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
-    println!("Server running on http://{}", addr);
-
+    // Bind public for dev
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+    println!("🚀 Müe Heroes backend on http://{addr}");
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .unwrap();
-}
-
-// ✅ POST /submit → store submission in memory
-async fn handle_submit(
-    State(state): State<AppState>,
-    Json(payload): Json<Submission>,
-) -> &'static str {
-    let mut data = state.lock().unwrap();
-    data.push(payload);
-    "Submission received"
-}
-
-// ✅ GET /leaderboard → return all stored submissions as JSON
-async fn handle_leaderboard(
-    State(state): State<AppState>,
-) -> Json<Vec<Submission>> {
-    let data = state.lock().unwrap();
-    Json(data.clone())
 }

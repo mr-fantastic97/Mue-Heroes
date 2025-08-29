@@ -1,12 +1,10 @@
-// backend/src/handlers/leaderboard.rs
 use axum::{extract::State, Json};
-use std::collections::HashMap;  
-use crate::handlers::submission::{Submission, SharedState};
-use crate::engine::game::Game;
+use crate::handlers::submission::SharedState;
+use crate::state::SESSIONS;
 
 #[derive(serde::Serialize)]
 pub struct LeaderboardEntry {
-    pub wallet_tag: String,   // truncated for UI
+    pub wallet_tag: String,
     pub score: u32,
     pub rank: usize,
     pub mu_level: u8,
@@ -15,7 +13,6 @@ pub struct LeaderboardEntry {
     pub tier: String,
 }
 
-
 fn tag_wallet(addr: &str) -> String {
     if addr.len() <= 14 { return addr.to_string(); }
     let start = &addr[..10.min(addr.len())];
@@ -23,42 +20,22 @@ fn tag_wallet(addr: &str) -> String {
     format!("{start}...{end}")
 }
 
-pub async fn get_leaderboard(State(state): State<SharedState>) -> Json<Vec<LeaderboardEntry>> {
-    let data = state.read().unwrap().clone();
+pub async fn get_leaderboard(State(_): State<SharedState>) -> Json<Vec<LeaderboardEntry>> {
+    let sessions = SESSIONS.read().unwrap();
 
-    // Group by full wallet
-    let mut by_wallet: HashMap<String, Vec<Submission>> = HashMap::new();
-    for s in data {
-        by_wallet.entry(s.wallet.clone()).or_default().push(s);
-    }
-
-    // Reduce per wallet
-    let mut entries: Vec<LeaderboardEntry> = by_wallet.into_iter().map(|(wallet, subs)| {
-        let score: u32 = subs.iter().map(|s| s.score).sum();
-        let highest_mu = subs.iter().map(|s| s.mu_level).max().unwrap_or(0);
-
-        let latest = subs.iter()
-            .max_by(|a,b| a.date_mined.cmp(&b.date_mined))
-            .unwrap();
-
-        let is_mined_highest = subs.iter()
-            .any(|s| s.mu_level == highest_mu && s.event_type == "mined");
-
-        let base_tier = Game::rank_from_level(highest_mu, is_mined_highest).to_string();
-
+    let mut entries: Vec<LeaderboardEntry> = sessions.iter().map(|(wallet, session)| {
         LeaderboardEntry {
-            wallet_tag: tag_wallet(&wallet),
-            score,
-            mu_level: highest_mu,
-            block_height: latest.block_height,
-            date_mined: latest.date_mined.clone(),
+            wallet_tag: tag_wallet(&wallet.to_string()),
+            score: session.get_score(),
+            mu_level: 0,            // TODO: track highest μ per session
+            block_height: 0,        // TODO: track last block
+            date_mined: "".into(),  // TODO: track last timestamp
             rank: 0,
-            tier: base_tier,
+            tier: session.get_rank(),
         }
     }).collect();
 
-    // Sort and medalize
-    entries.sort_by(|a,b| b.score.cmp(&a.score).then_with(|| b.date_mined.cmp(&a.date_mined)));
+    entries.sort_by(|a,b| b.score.cmp(&a.score));
     for (i, e) in entries.iter_mut().enumerate() {
         e.rank = i + 1;
         e.tier = match i {

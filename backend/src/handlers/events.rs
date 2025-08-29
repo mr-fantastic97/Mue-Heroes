@@ -1,7 +1,7 @@
 // backend/src/handlers/events.rs
 use axum::{extract::{Query, State}, Json};
 use serde::Deserialize;
-use crate::handlers::submission::{Submission, SharedState};
+use crate::handlers::submission::SharedState;
 
 #[derive(Deserialize)]
 pub struct EventsQuery {

@@ -1,6 +1,14 @@
 // backend/src/main.rs
 mod handlers;
 mod engine;
+// state lives at src/state/lib.rs (not src/state/mod.rs)
+#[path = "state/lib.rs"]
+mod state;
+
+// episodes file is src/episodes.rs (plural). 
+#[path = "episode.rs"]
+mod episode;
+
 
 use axum::{
     routing::{get, post},

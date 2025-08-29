@@ -2,3 +2,6 @@
 
 # Ignore runtime logs
 backend/logs/submissions.jsonl
+
+# Local environment
+.env

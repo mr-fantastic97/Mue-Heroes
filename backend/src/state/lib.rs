@@ -1,15 +1,13 @@
-//allows Kdapp state to persist per wallet during runtime.
-
-
 use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::RwLock;
 use once_cell::sync::Lazy;
-use crate::pki::PubKey;
-use crate::kdapp::MueHeroSession;
+
+use crate::state::pki::PubKey;
+use crate::engine::kdapp::MueHeroSession;
+
 pub mod pki;
 pub mod types;
 
-
-
-pub static SESSIONS: Lazy<Mutex<HashMap<PubKey, MueHeroSession>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+/// Global session manager: tracks per-wallet game sessions
+pub static SESSIONS: Lazy<RwLock<HashMap<PubKey, MueHeroSession>>> =
+    Lazy::new(|| RwLock::new(HashMap::new()));

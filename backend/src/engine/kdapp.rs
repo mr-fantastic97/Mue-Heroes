@@ -1,8 +1,8 @@
 use crate::episode::{Episode, EpisodeError, PayloadMetadata};
-use crate::game::{Game, GameCommand, GameCommandError};
-use crate::pki::PubKey;
-use crate::types::SuperblockEvent;
-use crate::utils::merkle::merkle::{verify_merkle_proof, compute_leaf_from_wallet};
+use crate::engine::game::{Game, GameCommand, GameCommandError};
+use crate::state::pki::PubKey;
+use crate::state::types::SuperblockEvent;
+use crate::engine::merkle::{verify_merkle_proof, compute_leaf_from_wallet};
 
 #[derive(Default, Clone)]
 pub struct MueHeroSession {
@@ -20,22 +20,20 @@ impl Episode for MueHeroSession {
     type CommandRollback = u32;
 
     fn initialize(_participants: Vec<PubKey>, _metadata: &PayloadMetadata) -> Self {
-        Self {
-            game: Game::default(),
-        }
+        Self { game: Game::default() }
     }
 
     fn execute(
         &mut self,
         cmd: &Self::Command,
-        _auth: Option<PubKey>,
+        auth: Option<PubKey>,
         metadata: &PayloadMetadata,
     ) -> Result<Self::CommandRollback, EpisodeError<Self::CommandError>> {
         let game_cmd = if cmd.is_witness {
-            if let (Some(root), Some(proof), Some(index), Some(auth)) =
-                (&cmd.merkle_root, &cmd.proof, cmd.witness_index, _auth)
+            if let (Some(root), Some(proof), Some(index), Some(auth_pk)) =
+                (&cmd.merkle_root, &cmd.proof, cmd.witness_index, auth.clone())
             {
-                let leaf = compute_leaf_from_wallet(auth);
+                let leaf = compute_leaf_from_wallet(&auth_pk);
                 if verify_merkle_proof(leaf, proof.clone(), *root, index) {
                     GameCommand::WitnessPoints { level: cmd.mu_level }
                 } else {
@@ -49,7 +47,7 @@ impl Episode for MueHeroSession {
         };
 
         self.game
-            .execute(&game_cmd, _auth, metadata)
+            .execute(&game_cmd, auth, metadata)
             .map_err(|e| match e {
                 EpisodeError::CommandError(inner) => EpisodeError::CommandError(MueError::Game(inner)),
                 EpisodeError::InternalError(msg) => EpisodeError::InternalError(msg),

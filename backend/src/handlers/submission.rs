@@ -1,4 +1,3 @@
-// backend/src/handlers/submission.rs
 use axum::{extract::{State, Json}, http::HeaderMap};
 use serde::{Deserialize, Serialize};
 use std::{
@@ -7,6 +6,14 @@ use std::{
     sync::{Arc, RwLock},
 };
 use chrono::Utc;
+use hex;
+
+use crate::state::{pki::PubKey, SESSIONS};
+use crate::engine::kdapp::MueHeroSession;
+use crate::state::types::SuperblockEvent;
+use crate::episode::PayloadMetadata;
+use crate::episode::Episode;
+
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Submission {
@@ -34,21 +41,45 @@ pub async fn handle_submission(
 
     // --- sanity tweaks for MVP ---
     if payload.mu_level < 15 {
-        // accept-but-ignore if below threshold
         return Ok(Json(serde_json::json!({"status":"ignored"})));
     }
-    // normalize time if empty
     if payload.date_mined.trim().is_empty() {
         payload.date_mined = Utc::now().to_rfc3339();
     }
 
-    // append to memory
+    // --- feed into kdapp session ---
+    let pubkey_bytes = hex::decode(&payload.wallet).map_err(|_| {
+        (axum::http::StatusCode::BAD_REQUEST, "invalid wallet hex".to_string())
+    })?;
+    if pubkey_bytes.len() < 32 {
+        return Err((axum::http::StatusCode::BAD_REQUEST, "wallet too short".to_string()));
+    }
+    let mut pk_arr = [0u8; 32];
+    pk_arr.copy_from_slice(&pubkey_bytes[..32]);
+    let pubkey = PubKey::new(pk_arr);
+
+    let event = SuperblockEvent {
+        mu_level: payload.mu_level,
+        is_witness: payload.event_type == "witness",
+        merkle_root: None,
+        proof: None,
+        witness_index: None,
+        block_height: payload.block_height,
+    };
+
+    {
+        let mut sessions = SESSIONS.write().unwrap();
+        let session = sessions.entry(pubkey.clone()).or_insert_with(|| {
+            MueHeroSession::initialize(vec![pubkey.clone()], &PayloadMetadata { accepting_time: 0 })
+        });
+        let _ = session.execute(&event, Some(pubkey.clone()), &PayloadMetadata { accepting_time: 0 });
+    }
+
+    // --- append to memory + JSONL ---
     {
         let mut vec = state.write().unwrap();
         vec.push(payload.clone());
     }
-
-    // append to JSONL
     create_dir_all("logs").ok();
     if let Ok(mut f) = OpenOptions::new().create(true).append(true).open("logs/submissions.jsonl") {
         let _ = writeln!(f, "{}", serde_json::to_string(&payload).unwrap());
@@ -61,7 +92,7 @@ pub async fn handle_submission(
 pub fn load_submissions_from_jsonl(path: &str) -> Vec<Submission> {
     let file = match File::open(path) {
         Ok(f) => f,
-        Err(_) => return Vec::new(), // no file yet
+        Err(_) => return Vec::new(),
     };
     let reader = BufReader::new(file);
     let mut out = Vec::new();

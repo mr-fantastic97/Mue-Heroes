@@ -1,5 +1,7 @@
+// backend/src/handlers/leaderboard.rs
+
 use axum::{extract::State, Json};
-use crate::handlers::submission::SharedState;
+use crate::handlers::submission::{SharedState, Submission};
 use crate::state::SESSIONS;
 
 #[derive(serde::Serialize)]
@@ -20,22 +22,35 @@ fn tag_wallet(addr: &str) -> String {
     format!("{start}...{end}")
 }
 
-pub async fn get_leaderboard(State(_): State<SharedState>) -> Json<Vec<LeaderboardEntry>> {
+pub async fn get_leaderboard(State(state): State<SharedState>) -> Json<Vec<LeaderboardEntry>> {
     let sessions = SESSIONS.read().unwrap();
+    let submissions = state.read().unwrap();
 
+    // Group submissions by wallet so we can pull metadata
     let mut entries: Vec<LeaderboardEntry> = sessions.iter().map(|(wallet, session)| {
+        // Find this wallet’s submissions
+        let mut wallet_subs: Vec<&Submission> = submissions
+            .iter()
+            .filter(|s| s.wallet == hex::encode(wallet.as_bytes()))
+            .collect();
+
+        // Pull latest submission for metadata
+        wallet_subs.sort_by(|a, b| b.date_mined.cmp(&a.date_mined));
+        let latest = wallet_subs.first();
+
         LeaderboardEntry {
             wallet_tag: tag_wallet(&wallet.to_string()),
             score: session.get_score(),
-            mu_level: 0,            // TODO: track highest μ per session
-            block_height: 0,        // TODO: track last block
-            date_mined: "".into(),  // TODO: track last timestamp
+            mu_level: latest.map(|s| s.mu_level).unwrap_or(0),
+            block_height: latest.map(|s| s.block_height).unwrap_or(0),
+            date_mined: latest.map(|s| s.date_mined.clone()).unwrap_or_default(),
             rank: 0,
             tier: session.get_rank(),
         }
     }).collect();
 
-    entries.sort_by(|a,b| b.score.cmp(&a.score));
+    // Sort and assign ranks + medals
+    entries.sort_by(|a,b| b.score.cmp(&a.score).then(b.date_mined.cmp(&a.date_mined)));
     for (i, e) in entries.iter_mut().enumerate() {
         e.rank = i + 1;
         e.tier = match i {

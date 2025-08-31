@@ -37,10 +37,23 @@
     box-shadow: 0 8px 24px rgba(16, 24, 40, .06);
 }
 
-/* Full-width leaderboard; larger than before */
+/* Full-width leaderboard card */
 .leaderboard-card {
     width: min(92vw, var(--content-max));
     margin: 0 auto 18px;
+}
+
+/* Wrapper so we can center ReadMe outside the card */
+.leaderboard-wrap {
+    position: relative;
+    width: min(92vw, var(--content-max));
+    margin: 0 auto 62px;
+    /* extra space for floating button */
+}
+
+.leaderboard-wrap>.leaderboard-card {
+    width: 100%;
+    margin: 0;
 }
 
 /* Two equal columns below */
@@ -55,7 +68,7 @@
     min-height: var(--card-min-h);
 }
 
-/* Table styles (kept from before) */
+/* Table styles */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -90,7 +103,7 @@ td.wallet-cell {
     padding: 2rem 0;
 }
 
-/* Chip toggle */
+/* Chips */
 .chip-row {
     display: flex;
     gap: .5rem;
@@ -111,38 +124,77 @@ td.wallet-cell {
     border-color: #a9cfff;
 }
 
-/* Buttons */
-.button-row {
-    margin-top: 1rem;
-    text-align: center;
+/* Top bar: chips left, Connect Wallet right */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5rem;
 }
 
-.button-row button {
+.topbar .chip-row {
+    margin-bottom: 0;
+}
+
+.connect-btn {
+    margin: 0;
+}
+
+/* --- Smooth shared button style (same size, no black outline) --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
     min-width: 160px;
-    margin: 0.5rem;
-    padding: 0.7rem 1.2rem;
-    border: none;
-    border-radius: 8px;
+    padding: .62rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
     font-weight: 600;
     cursor: pointer;
+    outline: none;
+    /* remove default black outline */
+    transition: background-color .2s, box-shadow .2s, transform .02s;
+    box-shadow: 0 6px 16px rgba(16, 24, 40, .06);
 }
 
-.refresh-btn {
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* Accessible custom focus ring */
+.btn:focus-visible {
+    box-shadow: 0 0 0 3px rgba(11, 99, 195, .20), 0 6px 16px rgba(16, 24, 40, .08);
+}
+
+/* Themes */
+.btn-primary {
     background: #e0f0ff;
     color: #0b63c3;
 }
 
-.refresh-btn:hover {
+.btn-primary:hover {
     background: #cde5ff;
 }
 
-.join-btn {
+.btn-success {
     background: #d4edda;
     color: #2e6b33;
 }
 
-.join-btn:hover {
+.btn-success:hover {
     background: #c3e6cb;
+}
+
+/* Center the ReadMe button just below the card */
+.readme-floating {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -46px;
+    /* slightly below the card edge */
+    white-space: nowrap;
+    z-index: 2;
 }
 
 /* Responsive: stack the bottom cards on small screens */
@@ -153,5 +205,12 @@ td.wallet-cell {
 
     .card.tall {
         min-height: 280px;
+    }
+}
+
+/* Small tweak for narrow screens */
+@media (max-width: 640px) {
+    .readme-floating {
+        bottom: -14px;
     }
 }

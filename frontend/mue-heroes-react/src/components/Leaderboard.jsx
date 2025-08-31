@@ -1,4 +1,3 @@
-// src/components/Leaderboard.jsx
 import { useEffect, useState } from "react";
 
 export default function Leaderboard() {
@@ -16,19 +15,30 @@ export default function Leaderboard() {
 
     return (
         <section className="card leaderboard-card">
-            <div className="chip-row">
-                <button className={`chip ${limit === 5 ? "active" : ""}`} onClick={() => setLimit(5)}>
-                    Top 5
-                </button>
-                <button className={`chip ${limit === 10 ? "active" : ""}`} onClick={() => setLimit(10)}>
-                    Top 10
-                </button>
-                <button
-                    className={`chip ${limit === "ALL" ? "active" : ""}`}
-                    onClick={() => setLimit("ALL")}
-                >
-                    All
-                </button>
+            {/* Top bar: chips (left) + Connect Wallet (right) */}
+            <div className="topbar">
+                <div className="chip-row">
+                    <button
+                        className={`chip ${limit === 5 ? "active" : ""}`}
+                        onClick={() => setLimit(5)}
+                    >
+                        Top 5
+                    </button>
+                    <button
+                        className={`chip ${limit === 10 ? "active" : ""}`}
+                        onClick={() => setLimit(10)}
+                    >
+                        Top 10
+                    </button>
+                    <button
+                        className={`chip ${limit === "ALL" ? "active" : ""}`}
+                        onClick={() => setLimit("ALL")}
+                    >
+                        All
+                    </button>
+                </div>
+
+                <button className="btn btn-primary connect-btn">🔑 Connect Wallet</button>
             </div>
 
             <table>
@@ -45,9 +55,7 @@ export default function Leaderboard() {
                 <tbody>
                     {visible.length === 0 ? (
                         <tr>
-                            <td colSpan={6} className="empty">
-                                No entries yet.
-                            </td>
+                            <td colSpan={6} className="empty">No entries yet.</td>
                         </tr>
                     ) : (
                         visible.map((e, i) => (
@@ -65,12 +73,6 @@ export default function Leaderboard() {
                     )}
                 </tbody>
             </table>
-
-            <div className="button-row">
-                <button className="refresh-btn">🔑 Connect Wallet</button>
-                <button className="join-btn">📜 ReadMe.md</button>
-            </div>
         </section>
     );
 }
-

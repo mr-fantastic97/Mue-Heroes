@@ -1,0 +1,157 @@
+/* --- Layout container --- */
+:root {
+    --content-max: 1280px;
+    /* overall max width */
+    --gutter: 24px;
+    /* spacing */
+    --card-min-h: 360px;
+    /* taller bottom cards */
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 96px;
+    background: #f5f7fb;
+    min-height: 100vh;
+}
+
+/* Centered heading */
+.hero {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* Cards */
+.card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, .06);
+}
+
+/* Full-width leaderboard; larger than before */
+.leaderboard-card {
+    width: min(92vw, var(--content-max));
+    margin: 0 auto 18px;
+}
+
+/* Two equal columns below */
+.two-col {
+    width: min(92vw, var(--content-max));
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gutter);
+}
+
+.card.tall {
+    min-height: var(--card-min-h);
+}
+
+/* Table styles (kept from before) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: .5rem;
+}
+
+th,
+td {
+    padding: .75rem;
+    text-align: center;
+    border-bottom: 1px solid #eef0f3;
+}
+
+th {
+    background: #f7f9fc;
+    font-weight: 700;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+td.wallet-cell {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty {
+    color: #9aa4b2;
+    padding: 2rem 0;
+}
+
+/* Chip toggle */
+.chip-row {
+    display: flex;
+    gap: .5rem;
+    margin-bottom: .75rem;
+}
+
+.chip {
+    padding: .35rem .75rem;
+    border-radius: 999px;
+    border: 1px solid #d7dbe0;
+    background: #f5f7fb;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.chip.active {
+    background: #e0f0ff;
+    border-color: #a9cfff;
+}
+
+/* Buttons */
+.button-row {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.button-row button {
+    min-width: 160px;
+    margin: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.refresh-btn {
+    background: #e0f0ff;
+    color: #0b63c3;
+}
+
+.refresh-btn:hover {
+    background: #cde5ff;
+}
+
+.join-btn {
+    background: #d4edda;
+    color: #2e6b33;
+}
+
+.join-btn:hover {
+    background: #c3e6cb;
+}
+
+/* Responsive: stack the bottom cards on small screens */
+@media (max-width: 980px) {
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .card.tall {
+        min-height: 280px;
+    }
+}

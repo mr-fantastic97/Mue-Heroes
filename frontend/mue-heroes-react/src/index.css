@@ -1,0 +1,15 @@
+/*Mue-heroes-react/src/index.css*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f8f9fa;
+}

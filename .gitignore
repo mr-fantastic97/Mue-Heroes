@@ -21,3 +21,6 @@ Thumbs.db
 *.log
 
 
+
+# local run logs
+backend/logs/*.jsonl

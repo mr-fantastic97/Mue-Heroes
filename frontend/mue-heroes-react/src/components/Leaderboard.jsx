@@ -1,12 +1,16 @@
 // src/components/Leaderboard.jsx
 import { useEffect, useState } from "react";
 
-export default function Leaderboard() {
+export default function Leaderboard({ entries: injected }) {
     const [entries, setEntries] = useState([]);
     const [limit, setLimit] = useState(10); // 5, 10, or ALL
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (injected) {
+            setLoading(false);
+            return;
+        }
         const API = import.meta.env.VITE_API_URL;
         fetch(`${API}/leaderboard`)
             .then((r) => {
@@ -16,13 +20,13 @@ export default function Leaderboard() {
             .then((data) => setEntries(Array.isArray(data) ? data : []))
             .catch((e) => console.error("leaderboard fetch failed:", e))
             .finally(() => setLoading(false));
-    }, []);
+    }, [injected]);
 
-    const visible = entries.slice(0, limit === "ALL" ? entries.length : limit);
+    const source = injected ?? entries;
+    const visible = source.slice(0, limit === "ALL" ? source.length : limit);
 
     return (
         <section className="card leaderboard-card">
-            {/* Top bar: chips (left) + Connect Wallet (right) */}
             <div className="topbar">
                 <div className="chip-row">
                     <button
@@ -62,15 +66,19 @@ export default function Leaderboard() {
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td colSpan={6} className="empty">Loading leaderboard…</td>
+                            <td colSpan={6} className="empty">
+                                Loading leaderboard…
+                            </td>
                         </tr>
                     ) : visible.length === 0 ? (
                         <tr>
-                            <td colSpan={6} className="empty">No entries yet</td>
+                            <td colSpan={6} className="empty">
+                                No entries yet
+                            </td>
                         </tr>
                     ) : (
                         visible.map((e, i) => (
-                            <tr key={e.wallet || i}>
+                            <tr key={e.wallet || e.wallet_tag || i}>
                                 <td>#{i + 1}</td>
                                 <td className="wallet-cell" title={e.wallet || e.wallet_tag}>
                                     {e.wallet_tag || e.wallet || "—"}
@@ -78,7 +86,9 @@ export default function Leaderboard() {
                                 <td>{e.mu_level ?? "—"}</td>
                                 <td>{e.score ?? "—"}</td>
                                 <td>{e.block_height ?? "—"}</td>
-                                <td>{e.date_mined ? new Date(e.date_mined).toLocaleString() : "—"}</td>
+                                <td>
+                                    {e.date_mined ? new Date(e.date_mined).toLocaleString() : "—"}
+                                </td>
                             </tr>
                         ))
                     )}
@@ -87,3 +97,4 @@ export default function Leaderboard() {
         </section>
     );
 }
+

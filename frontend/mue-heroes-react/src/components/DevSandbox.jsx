@@ -1,48 +1,58 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import HealthPill from "./HealthPill";
+import { getJSON, postJSON } from "../lib/api";
 
-const BASE_URL = "http://localhost:8000";
+const HEALTH_MS = 15000;
+
+const statusFromDecision = (d) => {
+    if (!d) return { ui: "down", label: "API unreachable" };
+    if (d.status === "down" || d.ok === false) return { ui: "down", label: d.message || "Down" };
+    if (d.status === "degraded") return { ui: "degraded", label: d.message || "Degraded" };
+    return { ui: "ready", label: "Ready" };
+};
 
 export default function DevSandbox() {
-    const [status, setStatus] = useState({ label: "Ready", color: "ok" });
+    const [health, setHealth] = useState({ ui: "ready", label: "Ready" });
+    const [posting, setPosting] = useState(false);
+    const [lastResult, setLastResult] = useState(null);
 
-    const [mine, setMine] = useState({
-        wallet: "",
-        mu_level: 15,
-        block_height: "",
-    });
+    const [mine, setMine] = useState({ wallet: "", mu_level: 15, block_height: "" });
+    const [witness, setWitness] = useState({ wallet: "", mu_level: 15, proof: "" });
 
-    const [witness, setWitness] = useState({
-        wallet: "",
-        mu_level: 15,
-        proof: "",
-    });
+    const pollRef = useRef(null);
+    const inflightRef = useRef(null);
 
-    const postJSON = async (path, body) => {
+    const refreshHealth = async () => {
         try {
-            setStatus({ label: "Posting…", color: "warn" });
-            const r = await fetch(`${BASE_URL}${path}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
-            if (!r.ok) throw new Error(`HTTP ${r.status}`);
-            setStatus({ label: "Success", color: "ok" });
-        } catch (e) {
-            setStatus({ label: "Error", color: "err" });
-            console.error(e);
+            inflightRef.current?.abort?.();
+            inflightRef.current = new AbortController();
+            const decision = await getJSON("/health", { timeout: 8000, signal: inflightRef.current.signal });
+            setHealth(statusFromDecision(decision));
+        } catch {
+            setHealth({ ui: "down", label: "API unreachable" });
         }
     };
 
-    const submitMine = () => postJSON("/submit/mine", mine);
-    const submitWitness = () => postJSON("/submit/witness", witness);
+    useEffect(() => {
+        refreshHealth();
+        pollRef.current = setInterval(refreshHealth, HEALTH_MS);
+        return () => {
+            if (pollRef.current) clearInterval(pollRef.current);
+            inflightRef.current?.abort?.();
+        };
+    }, []);
 
-    const resetAll = async () => {
+    const doAction = async (fn) => {
+        setPosting(true);
+        setLastResult(null);
         try {
-            setStatus({ label: "Resetting…", color: "warn" });
-            await fetch(`${BASE_URL}/reset`, { method: "POST" });
-            setStatus({ label: "Ready", color: "ok" });
-        } catch {
-            setStatus({ label: "Error", color: "err" });
+            const data = await fn();
+            setLastResult(data);
+        } catch (e) {
+            setLastResult({ error: e?.message || String(e) });
+        } finally {
+            setPosting(false);
+            setTimeout(refreshHealth, 300);
         }
     };
 
@@ -50,63 +60,39 @@ export default function DevSandbox() {
         <section className="card tall">
             <div className="panel-head">
                 <h2>🛠️ Dev Sandbox</h2>
-                <div className="status">
-                    <span className={`dot ${status.color}`} />
-                    <span>{status.label}</span>
-                </div>
+                <HealthPill
+                    status={health.ui === "ready" ? "ready" : health.ui === "degraded" ? "degraded" : "down"}
+                    label={health.label}
+                />
             </div>
 
-            {/* Quick Actions */}
             <div className="actions-row">
-                <button className="btn btn-primary" onClick={submitMine}>
+                <button className="btn btn-primary" disabled={posting}
+                    onClick={() => doAction(() => postJSON("/submit/mine", mine))}>
                     Submit Mine
                 </button>
-                <button className="btn btn-primary" onClick={submitWitness}>
+                <button className="btn btn-primary" disabled={posting}
+                    onClick={() => doAction(() => postJSON("/submit/witness", witness))}>
                     Submit Witness
                 </button>
-                <button className="btn btn-success" onClick={resetAll}>
+                <button className="btn btn-success" disabled={posting}
+                    onClick={() => doAction(() => postJSON("/reset", {}))}>
                     Reset
                 </button>
             </div>
 
-            {/* Forms */}
             <div className="sandbox-forms">
                 <fieldset className="box">
                     <legend>Mine Superblock</legend>
                     <div className="grid-2">
-                        <label>
-                            Wallet
-                            <input
-                                value={mine.wallet}
-                                onChange={(e) =>
-                                    setMine((m) => ({ ...m, wallet: e.target.value }))
-                                }
-                                placeholder="kaspa:..."
-                            />
+                        <label>Wallet
+                            <input value={mine.wallet} onChange={(e) => setMine((m) => ({ ...m, wallet: e.target.value }))} placeholder="kaspa:..." />
                         </label>
-                        <label>
-                            μ-Level
-                            <input
-                                type="number"
-                                min={15}
-                                max={32}
-                                value={mine.mu_level}
-                                onChange={(e) =>
-                                    setMine((m) => ({ ...m, mu_level: Number(e.target.value) }))
-                                }
-                            />
+                        <label>μ-Level
+                            <input type="number" min={15} max={32} value={mine.mu_level} onChange={(e) => setMine((m) => ({ ...m, mu_level: Number(e.target.value) }))} />
                         </label>
-                        <label>
-                            Block Height
-                            <input
-                                type="number"
-                                value={mine.block_height}
-                                onChange={(e) =>
-                                    setMine((m) => ({ ...m, block_height: Number(e.target.value) }))
-                                }
-                                placeholder="e.g  212,600,009"
-
-                            />
+                        <label>Block Height
+                            <input type="number" value={mine.block_height} onChange={(e) => setMine((m) => ({ ...m, block_height: Number(e.target.value) || "" }))} placeholder="e.g. 2,520,000" />
                         </label>
                     </div>
                 </fieldset>
@@ -114,44 +100,24 @@ export default function DevSandbox() {
                 <fieldset className="box">
                     <legend>Witness Superblock</legend>
                     <div className="grid-2">
-                        <label>
-                            Wallet
-                            <input
-                                value={witness.wallet}
-                                onChange={(e) =>
-                                    setWitness((w) => ({ ...w, wallet: e.target.value }))
-                                }
-                                placeholder="kaspa:..."
-                            />
+                        <label>Wallet
+                            <input value={witness.wallet} onChange={(e) => setWitness((w) => ({ ...w, wallet: e.target.value }))} placeholder="kaspa:..." />
                         </label>
-                        <label>
-                            μ-Level
-                            <input
-                                type="number"
-                                min={15}
-                                max={32}
-                                value={witness.mu_level}
-                                onChange={(e) =>
-                                    setWitness((w) => ({
-                                        ...w,
-                                        mu_level: Number(e.target.value),
-                                    }))
-                                }
-                            />
+                        <label>μ-Level
+                            <input type="number" min={15} max={32} value={witness.mu_level} onChange={(e) => setWitness((w) => ({ ...w, mu_level: Number(e.target.value) }))} />
                         </label>
-                        <label className="span-2">
-                            Merkle Proof (JSON / hex)
-                            <input
-                                value={witness.proof}
-                                onChange={(e) =>
-                                    setWitness((w) => ({ ...w, proof: e.target.value }))
-                                }
-                                placeholder='{siblings: ["0x83f1…","0x4c9a…","0xb733…"], path: "010"}'
-                            />
+                        <label className="span-2">Merkle Proof (JSON / hex)
+                            <input value={witness.proof} onChange={(e) => setWitness((w) => ({ ...w, proof: e.target.value }))} placeholder='{ siblings: ["kaspa:q83f1…", "kaspa:q4c9a…"],  path : "010"}' />
                         </label>
                     </div>
                 </fieldset>
             </div>
+
+            {lastResult && (
+                <pre className="box" style={{ marginTop: 12, overflow: "auto", maxHeight: 200 }}>
+                    {JSON.stringify(lastResult, null, 2)}
+                </pre>
+            )}
         </section>
     );
 }

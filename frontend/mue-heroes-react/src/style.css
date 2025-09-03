@@ -251,6 +251,15 @@ td.wallet-cell {
     border-bottom: 1px solid #eef0f3;
 }
 
+/* Base dot for both Event Feed + HealthPill */
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Event row-specific dot (smaller) */
 .event-row .dot {
     width: 8px;
     height: 8px;
@@ -303,14 +312,17 @@ td.wallet-cell {
 
 .dot.ok {
     background: #2ecc71;
+    /* green */
 }
 
 .dot.warn {
     background: #f1c40f;
+    /* yellow */
 }
 
 .dot.err {
     background: #e74c3c;
+    /* red */
 }
 
 .sandbox-forms {

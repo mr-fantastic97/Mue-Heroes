@@ -1,9 +1,12 @@
-export default function HealthPill({ status = "ready", label = "Ready" }) {
-    // status: "ready" | "degraded" | "down" | "posting" | "success" | "error"
-    const map = { ready: "ok", degraded: "warn", down: "err", posting: "warn", success: "ok", error: "err" };
+export default function HealthPill({ status, label }) {
+    let dotClass = "dot err"; // default red
+
+    if (status === "ready") dotClass = "dot ok";
+    else if (status === "degraded") dotClass = "dot warn";
+
     return (
-        <div className="status" aria-live="polite">
-            <span className={`dot ${map[status] || "ok"}`} />
+        <div className="status">
+            <span className={dotClass}></span>
             <span>{label}</span>
         </div>
     );

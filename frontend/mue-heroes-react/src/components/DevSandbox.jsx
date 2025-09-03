@@ -14,7 +14,7 @@ const statusFromDecision = (d) => {
 export default function DevSandbox() {
     const [health, setHealth] = useState({ ui: "ready", label: "Ready" });
     const [posting, setPosting] = useState(false);
-    const [lastResult, setLastResult] = useState(null);
+    const [message, setMessage] = useState(null); // ✅ for inline feedback
 
     const [mine, setMine] = useState({ wallet: "", mu_level: 15, block_height: "" });
     const [witness, setWitness] = useState({ wallet: "", mu_level: 15, proof: "" });
@@ -42,14 +42,15 @@ export default function DevSandbox() {
         };
     }, []);
 
-    const doAction = async (fn) => {
+    const doAction = async (fn, label) => {
         setPosting(true);
-        setLastResult(null);
+        setMessage(null);
         try {
             const data = await fn();
-            setLastResult(data);
+            setMessage({ type: "success", text: `${label} succeeded! ✅` });
+            console.log("Response:", data);
         } catch (e) {
-            setLastResult({ error: e?.message || String(e) });
+            setMessage({ type: "error", text: `${label} failed: ${e?.message || "Unknown error"}` });
         } finally {
             setPosting(false);
             setTimeout(refreshHealth, 300);
@@ -67,32 +68,105 @@ export default function DevSandbox() {
             </div>
 
             <div className="actions-row">
-                <button className="btn btn-primary" disabled={posting}
-                    onClick={() => doAction(() => postJSON("/submit/mine", mine))}>
+                <button
+                    className="btn btn-primary"
+                    disabled={posting}
+                    onClick={() =>
+                        doAction(
+                            () =>
+                                postJSON("/submit/mine", mine, {
+                                    headers: {
+                                        "content-type": "application/json",
+                                        "x-mue-key": import.meta.env.VITE_DEV_SUBMIT_KEY,
+                                    },
+                                }),
+                            "Mine submission"
+                        )
+                    }
+                >
                     Submit Mine
                 </button>
-                <button className="btn btn-primary" disabled={posting}
-                    onClick={() => doAction(() => postJSON("/submit/witness", witness))}>
+
+                <button
+                    className="btn btn-primary"
+                    disabled={posting}
+                    onClick={() =>
+                        doAction(
+                            () =>
+                                postJSON("/submit/witness", witness, {
+                                    headers: {
+                                        "content-type": "application/json",
+                                        "x-mue-key": import.meta.env.VITE_DEV_SUBMIT_KEY,
+                                    },
+                                }),
+                            "Witness submission"
+                        )
+                    }
+                >
                     Submit Witness
                 </button>
-                <button className="btn btn-success" disabled={posting}
-                    onClick={() => doAction(() => postJSON("/reset", {}))}>
+
+                <button
+                    className="btn btn-success"
+                    disabled={posting}
+                    onClick={() =>
+                        doAction(
+                            () =>
+                                postJSON("/reset", {}, {
+                                    headers: {
+                                        "x-admin-token": import.meta.env.VITE_DEV_ADMIN_TOKEN,
+                                    },
+                                }),
+                            "Reset"
+                        )
+                    }
+                >
                     Reset
                 </button>
             </div>
+
+            {message && (
+                <p
+                    style={{
+                        color: message.type === "error" ? "red" : "green",
+                        fontWeight: "600",
+                        marginTop: "8px",
+                    }}
+                >
+                    {message.text}
+                </p>
+            )}
 
             <div className="sandbox-forms">
                 <fieldset className="box">
                     <legend>Mine Superblock</legend>
                     <div className="grid-2">
-                        <label>Wallet
-                            <input value={mine.wallet} onChange={(e) => setMine((m) => ({ ...m, wallet: e.target.value }))} placeholder="kaspa:..." />
+                        <label>
+                            Wallet
+                            <input
+                                value={mine.wallet}
+                                onChange={(e) => setMine((m) => ({ ...m, wallet: e.target.value }))}
+                                placeholder="kaspa:..."
+                            />
                         </label>
-                        <label>μ-Level
-                            <input type="number" min={15} max={32} value={mine.mu_level} onChange={(e) => setMine((m) => ({ ...m, mu_level: Number(e.target.value) }))} />
+                        <label>
+                            μ-Level
+                            <input
+                                type="number"
+                                min={15}
+                                max={32}
+                                value={mine.mu_level}
+                                onChange={(e) => setMine((m) => ({ ...m, mu_level: Number(e.target.value) }))}
+                            />
                         </label>
-                        <label>Block Height
-                            <input type="number" value={mine.block_height} onChange={(e) => setMine((m) => ({ ...m, block_height: Number(e.target.value) || "" }))} placeholder="e.g. 2,520,000" />
+                        <label>
+                            Block Height
+                            <input
+                                type="number"
+                                value={mine.block_height}
+                                onChange={(e) => setMine((m) => ({ ...m, block_height: Number(e.target.value) || "" }))}
+                                placeholder="e.g. 2,520,000"
+                            />
                         </label>
                     </div>
                 </fieldset>
@@ -100,24 +174,35 @@ export default function DevSandbox() {
                 <fieldset className="box">
                     <legend>Witness Superblock</legend>
                     <div className="grid-2">
-                        <label>Wallet
-                            <input value={witness.wallet} onChange={(e) => setWitness((w) => ({ ...w, wallet: e.target.value }))} placeholder="kaspa:..." />
+                        <label>
+                            Wallet
+                            <input
+                                value={witness.wallet}
+                                onChange={(e) => setWitness((w) => ({ ...w, wallet: e.target.value }))}
+                                placeholder="kaspa:..."
+                            />
                         </label>
-                        <label>μ-Level
-                            <input type="number" min={15} max={32} value={witness.mu_level} onChange={(e) => setWitness((w) => ({ ...w, mu_level: Number(e.target.value) }))} />
+                        <label>
+                            μ-Level
+                            <input
+                                type="number"
+                                min={15}
+                                max={32}
+                                value={witness.mu_level}
+                                onChange={(e) => setWitness((w) => ({ ...w, mu_level: Number(e.target.value) }))}
+                            />
                         </label>
-                        <label className="span-2">Merkle Proof (JSON / hex)
-                            <input value={witness.proof} onChange={(e) => setWitness((w) => ({ ...w, proof: e.target.value }))} placeholder='{ siblings: ["kaspa:q83f1…", "kaspa:q4c9a…"],  path : "010"}' />
+                        <label className="span-2">
+                            Merkle Proof (JSON / hex)
+                            <input
+                                value={witness.proof}
+                                onChange={(e) => setWitness((w) => ({ ...w, proof: e.target.value }))}
+                                placeholder='{ siblings: ["0x...", "0x..."], path: "010" }'
+                            />
                         </label>
                     </div>
                 </fieldset>
             </div>
-
-            {lastResult && (
-                <pre className="box" style={{ marginTop: 12, overflow: "auto", maxHeight: 200 }}>
-                    {JSON.stringify(lastResult, null, 2)}
-                </pre>
-            )}
         </section>
     );
 }

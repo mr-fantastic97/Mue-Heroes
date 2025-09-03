@@ -1,14 +1,21 @@
+// src/components/Leaderboard.jsx
 import { useEffect, useState } from "react";
 
 export default function Leaderboard() {
     const [entries, setEntries] = useState([]);
     const [limit, setLimit] = useState(10); // 5, 10, or ALL
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:8000/leaderboard")
-            .then((r) => r.json())
+        const API = import.meta.env.VITE_API_URL;
+        fetch(`${API}/leaderboard`)
+            .then((r) => {
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                return r.json();
+            })
             .then((data) => setEntries(Array.isArray(data) ? data : []))
-            .catch((e) => console.error("leaderboard fetch failed:", e));
+            .catch((e) => console.error("leaderboard fetch failed:", e))
+            .finally(() => setLoading(false));
     }, []);
 
     const visible = entries.slice(0, limit === "ALL" ? entries.length : limit);
@@ -53,9 +60,13 @@ export default function Leaderboard() {
                     </tr>
                 </thead>
                 <tbody>
-                    {visible.length === 0 ? (
+                    {loading ? (
                         <tr>
-                            <td colSpan={6} className="empty">No entries yet.</td>
+                            <td colSpan={6} className="empty">Loading leaderboard…</td>
+                        </tr>
+                    ) : visible.length === 0 ? (
+                        <tr>
+                            <td colSpan={6} className="empty">No entries yet</td>
                         </tr>
                     ) : (
                         visible.map((e, i) => (

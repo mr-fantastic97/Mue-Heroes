@@ -2,3 +2,5 @@
 {"wallet":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","score":10,"mu_level":15,"block_height":12345,"date_mined":"2025-08-29T18:52:40.902076237+00:00","event_type":"mined"}
 {"wallet":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","score":0,"mu_level":15,"block_height":11111,"date_mined":"2025-08-29T19:27:12.060041946+00:00","event_type":"mined"}
 {"wallet":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","score":0,"mu_level":18,"block_height":22222,"date_mined":"2025-08-29T19:27:27.638717421+00:00","event_type":"witness"}
+{"wallet":"aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899","score":0,"mu_level":18,"block_height":3456789,"date_mined":"2025-09-03T05:42:00.541638855+00:00","event_type":"mined"}
+{"wallet":"aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899","score":0,"mu_level":18,"block_height":0,"date_mined":"2025-09-03T05:52:06.719693273+00:00","event_type":"witness"}

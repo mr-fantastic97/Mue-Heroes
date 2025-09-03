@@ -1,3 +1,5 @@
+//src/components/EventsPanel.jsx
+
 import { useEffect, useRef, useState } from "react";
 import { getJSON } from "../lib/api";
 
@@ -12,11 +14,17 @@ export default function EventsPanel() {
 
     const load = async () => {
         try {
-            inflightRef.current?.abort?.();                 // abort previous
+            inflightRef.current?.abort?.(); // cancel previous
             inflightRef.current = new AbortController();
-            const data = await getJSON("/events", { timeout: 8000, signal: inflightRef.current.signal });
-            if (Array.isArray(data)) setEvents(data);
-        } catch { /* silent by design */ }
+            const res = await getJSON("/events?limit=50&order=desc", {
+                timeout: 8000,
+                signal: inflightRef.current.signal,
+            });
+            // backend wraps events inside { events: [...] }
+            if (res && Array.isArray(res.events)) setEvents(res.events);
+        } catch {
+            /* silent */
+        }
     };
 
     useEffect(() => { load(); }, []);
@@ -36,7 +44,9 @@ export default function EventsPanel() {
         const blob = new Blob([JSON.stringify(events, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url; a.download = `mue-events-${Date.now()}.json`; a.click();
+        a.href = url;
+        a.download = `mue-events-${Date.now()}.json`;
+        a.click();
         URL.revokeObjectURL(url);
     };
 
@@ -46,24 +56,27 @@ export default function EventsPanel() {
                 <h2>📡 Events</h2>
                 <div className="panel-actions">
                     <span className="label">Auto-refresh:</span>
-                    <button className={`chip ${auto ? "active" : ""}`} onClick={() => setAuto(true)} aria-pressed={auto}>● On</button>
-                    <button className={`chip ${!auto ? "active" : ""}`} onClick={() => setAuto(false)} aria-pressed={!auto}>○ Off</button>
+                    <button className={`chip ${auto ? "active" : ""}`} onClick={() => setAuto(true)}>● On</button>
+                    <button className={`chip ${!auto ? "active" : ""}`} onClick={() => setAuto(false)}>○ Off</button>
                     <button className="btn btn-ghost" onClick={onClear}>Clear</button>
                     <button className="btn btn-ghost" onClick={onExport}>Export</button>
                 </div>
             </div>
 
             {events.length === 0 ? (
-                <p className="muted">Events will stream here (fetched from backend)…</p>
+                <p className="muted">Events will stream here …</p>
             ) : (
-                <ul className="event-list">
+                <ul className="event-feed">
                     {events.map((ev, i) => (
-                        <li key={ev.id ?? i} className="event-row">
-                            <span className="event-time">{ev.timestamp ? new Date(ev.timestamp).toLocaleString() : "—"}</span>
-                            <span className="pill">{ev.kind ?? "event"}</span>
-                            <span className="mono">{ev.wallet ? `${ev.wallet.slice(0, 12)}…` : "—"}</span>
-                            <span>μ {ev.mu_level ?? "—"}</span>
-                            <span>H {ev.block_height ?? "—"}</span>
+                        <li key={i} className="event-row">
+                            <span className="dot" /> {/* status icon */}
+                            <span className="mono">{ev.wallet ? ev.wallet.slice(0, 12) + "…" : "—"}</span>
+                            <span className="muted">{ev.event_type ?? "event"}</span>
+                            <span className="strong">{ev.mu_level ? `μ ${ev.mu_level}` : ""}</span>
+                            <span className="amount">{ev.score_delta} pts</span>
+                            <span className="muted small">
+                                {ev.date_mined ? new Date(ev.date_mined).toLocaleString() : ""}
+                            </span>
                         </li>
                     ))}
                 </ul>
@@ -71,3 +84,4 @@ export default function EventsPanel() {
         </section>
     );
 }
+

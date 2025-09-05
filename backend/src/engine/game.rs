@@ -1,4 +1,6 @@
-use crate::episode::{PayloadMetadata, EpisodeError};
+// backend/src/engine/game.rs
+
+use crate::episode::PayloadMetadata;
 use crate::state::pki::PubKey;
 
 #[derive(Default, Clone, Debug)]
@@ -12,28 +14,19 @@ pub enum GameCommand {
     WitnessPoints { level: u8 },
 }
 
-#[derive(Debug)]
-pub enum GameCommandError {
-    InvalidCommand,
-}
-
 impl Game {
     pub fn execute(
         &mut self,
         cmd: &GameCommand,
         _auth: Option<PubKey>,
         _metadata: &PayloadMetadata,
-    ) -> Result<u32, EpisodeError<GameCommandError>> {
-        match cmd {
-            GameCommand::AddPoints { level } => {
-                self.score += *level as u32;
-                Ok(*level as u32)
-            }
-            GameCommand::WitnessPoints { level } => {
-                self.score += (*level as u32) / 2;
-                Ok((*level as u32) / 2)
-            }
-        }
+    ) -> u32 {
+        let delta = match cmd {
+            GameCommand::AddPoints { level } => Self::points_for_level(*level),
+            GameCommand::WitnessPoints { level } => Self::points_for_level(*level) / 2,
+        };
+        self.score += delta;
+        delta
     }
 
     pub fn rollback(&mut self, rollback: u32) -> bool {
@@ -45,26 +38,17 @@ impl Game {
         }
     }
 
-    /// Tier label based on μ-level and whether the highest μ was mined.
-    pub fn rank_from_level(mu_level: u8, is_mined: bool) -> &'static str {
-        if !is_mined { return "🧾 μOracle"; }
-        match mu_level {
-            15 => "🧭 μScout",
-            16..=17 => "🔨 μForged",
-            18 => "🦁 μLegend",
-            19..=20 => "🧙 μMythic",
-            21..=u8::MAX => "🦍 μHonorius",
-            _ => "❓ Unknown",
-        }
-    }
-
-    pub fn rank_from_score(score: u32) -> &'static str {
-        match score {
-            0..=19    => "🧭 μScout",
-            20..=64   => "🔨 μForged",
-            65..=164  => "🦁 μLegend",
-            165..=414 => "🧙 μMythic",
-            _         => "🦍 μHonorius",
+    /// Scoring table — higher μ gives more points (no tiers/emojis)
+    fn points_for_level(mu: u8) -> u32 {
+        match mu {
+            15 => 15,
+            16 => 25,
+            17 => 40,
+            18 => 70,
+            19 => 120,
+            20 => 200,
+            21..=u8::MAX => 400,
+            _ => 0,
         }
     }
 }

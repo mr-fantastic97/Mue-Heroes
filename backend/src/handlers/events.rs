@@ -9,7 +9,7 @@ use axum::{
 use blake2::{Blake2b512, Digest};
 use serde::{Deserialize, Serialize};
 
-use crate::handlers::submission::{SharedState, Submission};
+use crate::handlers::submission::SharedState;
 
 #[derive(Deserialize)]
 pub struct EventsQuery {

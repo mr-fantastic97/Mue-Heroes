@@ -2,7 +2,7 @@
 use axum::{extract::{State, Json}, http::HeaderMap};
 use chrono::Utc;
 use serde::Deserialize;
-use std::{fs::OpenOptions, io::Write, sync::{Arc, RwLock}};
+use std::{fs::OpenOptions, io::Write};
 use hex;
 
 use crate::handlers::submission::{Submission, SharedState};

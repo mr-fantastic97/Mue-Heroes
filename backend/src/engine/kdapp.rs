@@ -1,24 +1,18 @@
 // backend/src/engine/kdapp.rs
 
 use crate::episode::{Episode, EpisodeError, PayloadMetadata};
-use crate::engine::game::{Game, GameCommand, GameCommandError};
+use crate::engine::game::{Game, GameCommand};
 use crate::state::pki::PubKey;
 use crate::state::types::SuperblockEvent;
-use crate::engine::merkle::{verify_merkle_proof, compute_leaf_from_wallet};
 
 #[derive(Default, Clone)]
 pub struct MueHeroSession {
     game: Game,
 }
 
-#[derive(Debug)]
-pub enum MueError {
-    Game(GameCommandError),
-}
-
 impl Episode for MueHeroSession {
     type Command = SuperblockEvent;
-    type CommandError = MueError;
+    type CommandError = ();          // no custom command errors for now
     type CommandRollback = u32;
 
     fn initialize(_participants: Vec<PubKey>, _metadata: &PayloadMetadata) -> Self {
@@ -28,22 +22,17 @@ impl Episode for MueHeroSession {
     fn execute(
         &mut self,
         cmd: &Self::Command,
-        auth: Option<PubKey>,
-        metadata: &PayloadMetadata,
+        _auth: Option<PubKey>,
+        _metadata: &PayloadMetadata,
     ) -> Result<Self::CommandRollback, EpisodeError<Self::CommandError>> {
         let game_cmd = if cmd.is_witness {
-            // For now, skip strict proof validation — just award witness points
             GameCommand::WitnessPoints { level: cmd.mu_level }
         } else {
             GameCommand::AddPoints { level: cmd.mu_level }
         };
 
-        self.game
-            .execute(&game_cmd, auth, metadata)
-            .map_err(|e| match e {
-                EpisodeError::CommandError(inner) => EpisodeError::CommandError(MueError::Game(inner)),
-                EpisodeError::InternalError(msg) => EpisodeError::InternalError(msg),
-            })
+        let delta = self.game.execute(&game_cmd, _auth, _metadata);
+        Ok(delta)
     }
 
     fn rollback(&mut self, rollback: u32) -> bool {
@@ -56,7 +45,8 @@ impl MueHeroSession {
         self.game.score
     }
 
+    // Optional: keep for UI compatibility, tierless (just return score as text)
     pub fn get_rank(&self) -> String {
-        Game::rank_from_score(self.game.score).to_string()
+        self.game.score.to_string()
     }
 }

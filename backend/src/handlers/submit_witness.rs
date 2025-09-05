@@ -6,7 +6,6 @@ use std::{fs::OpenOptions, io::Write};
 use hex;
 
 use crate::handlers::submission::{Submission, SharedState};
-use crate::state::{SESSIONS, pki::PubKey};
 use crate::engine::kdapp::MueHeroSession;
 use crate::state::types::SuperblockEvent;
 use crate::episode::PayloadMetadata;

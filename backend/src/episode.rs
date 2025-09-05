@@ -1,5 +1,8 @@
 // backend/src/episode.rs
 
+
+#![allow(dead_code)]
+
 /// Metadata that travels with every command (e.g., block time).
 #[derive(Debug, Clone, Copy)]
 pub struct PayloadMetadata {

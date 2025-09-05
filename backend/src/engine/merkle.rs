@@ -1,6 +1,12 @@
+//backend/src/engine/merkle.rs
+
+#[cfg(feature = "proofs")]
 use blake2::{Blake2b512, Digest};
+
+#[cfg(feature = "proofs")]
 use crate::state::pki::PubKey;
 
+#[cfg(feature = "proofs")]
 fn hash_pair(left: &[u8], right: &[u8]) -> [u8; 64] {
     let mut hasher = Blake2b512::new();
     hasher.update(left);
@@ -11,6 +17,7 @@ fn hash_pair(left: &[u8], right: &[u8]) -> [u8; 64] {
     out
 }
 
+#[cfg(feature = "proofs")]
 pub fn compute_merkle_root(mut hashes: Vec<[u8; 64]>) -> [u8; 64] {
     if hashes.is_empty() { return [0u8; 64]; }
     while hashes.len() > 1 {
@@ -25,6 +32,7 @@ pub fn compute_merkle_root(mut hashes: Vec<[u8; 64]>) -> [u8; 64] {
     hashes[0]
 }
 
+#[cfg(feature = "proofs")]
 pub fn verify_merkle_proof(
     mut leaf: [u8; 64],
     proof: Vec<[u8; 64]>,
@@ -38,6 +46,7 @@ pub fn verify_merkle_proof(
     leaf == merkle_root
 }
 
+#[cfg(feature = "proofs")]
 pub fn compute_leaf_from_wallet(pubkey: &PubKey) -> [u8; 64] {
     let mut hasher = Blake2b512::new();
     hasher.update(pubkey.as_bytes());

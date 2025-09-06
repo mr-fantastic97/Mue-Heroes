@@ -55,6 +55,7 @@ cd Mue-Heroes
 **Backend env -> backend/.env**
 mkdir -p backend
 cat > backend/.env <<'EOF'
+
 **Frontend origin allowed by CORS (Vite default)**
 CORS_ORIGINS=http://localhost:5173
 
@@ -85,14 +86,14 @@ VITE_DEMO_MODE=true
 **VITE_DEMO_MODE=false**
 EOF
 
-**3) Run backend (terminal A)**
+3) Run backend (terminal A)
 cd backend
 cargo run --bin backend
 
-**4) Run frontend (terminal B)**
+4) Run frontend (terminal B)
 cd ../frontend/mue-heroes-react
 npm install
 npm run dev
 
 
-**5) Have Fun !!!**
+5) Have Fun !!!

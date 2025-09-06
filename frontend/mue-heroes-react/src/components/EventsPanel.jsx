@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getJSON } from "../lib/api";
 
+const truncate = (s, n = 12) => (typeof s === "string" && s.length ? `${s.slice(0, n)}…` : "—");
 const POLL_MS = 3000;
 
 export default function EventsPanel({ events: external }) {
@@ -29,7 +30,7 @@ export default function EventsPanel({ events: external }) {
     // Initial load only if not externally driven
     useEffect(() => {
         if (!external) load();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [external]);
 
     // Polling only when not externally driven
@@ -42,7 +43,7 @@ export default function EventsPanel({ events: external }) {
             if (pollRef.current) clearInterval(pollRef.current);
             inflightRef.current?.abort?.();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [auto, external]);
 
     const onClear = () => setEvents([]);
@@ -101,22 +102,31 @@ export default function EventsPanel({ events: external }) {
                 <p className="muted">Events will stream here …</p>
             ) : (
                 <ul className="event-feed">
-                    {view.map((ev, i) => (
-                        <li key={i} className="event-row">
-                            <span className="dot" />
-                            <span className="mono">
-                                {ev.wallet ? ev.wallet.slice(0, 12) + "…" : "—"}
-                            </span>
-                            <span className="muted">{ev.event_type ?? "event"}</span>
-                            <span className="strong">
-                                {ev.mu_level ? `μ ${ev.mu_level}` : ""}
-                            </span>
-                            <span className="amount">{ev.score_delta} pts</span>
-                            <span className="muted small">
-                                {ev.date_mined ? new Date(ev.date_mined).toLocaleString() : ""}
-                            </span>
-                        </li>
-                    ))}
+                    {view.map((ev, i) => {
+
+                        const wallet =
+                            ev.wallet ??
+                            ev.witness_wallet ??
+                            ev.miner_wallet ??
+                            ev.wallet_tag ??
+                            "";
+
+                        const points = ev.score_delta ?? ev.score ?? 0;
+                        const action = ev.event_type ?? (ev.is_witness ? "witness" : "mined"); // robust fallback
+
+                        return (
+                            <li key={i} className="event-row">
+                                <span className="dot" />
+                                <span className="mono">{truncate(wallet)}</span>
+                                <span className="muted">{action}</span>
+                                <span className="strong">{ev.mu_level ? `μ ${ev.mu_level}` : ""}</span>
+                                <span className="amount">{points} pts</span>
+                                <span className="muted small">
+                                    {ev.date_mined ? new Date(ev.date_mined).toLocaleString() : ""}
+                                </span>
+                            </li>
+                        );
+                    })}
                 </ul>
             )}
         </section>

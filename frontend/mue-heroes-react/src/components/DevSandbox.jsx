@@ -284,7 +284,7 @@ export default function DevSandbox({ onLocalEvent, onLocalReset }) {
                                 onChange={(e) =>
                                     setWitness((w) => ({ ...w, proof: e.target.value }))
                                 }
-                                placeholder='{ "siblings": ["0x…"], "path": "010" }'
+                                placeholder='{ siblings:  ["0x…"],   path: "010" }'
                             />
                         </label>
                     </div>

@@ -28,7 +28,7 @@ Welcome to **Müe Heroes**, a cryptographic leaderboard built to rank wallets th
 
 ---
 
-## 🧠 KdApp Architecture
+## KdApp Architecture Breakdown
 
 Müe Heroes runs per wallet episodes; each wallet has its own game session.
 Mine/Witness events are submitted as commands and scored by a local rule engine.

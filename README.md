@@ -45,52 +45,45 @@ Mine/Witness events are submitted as commands and scored by a local rule engine.
 ---
 ## 🛠 Dev Quickstart (Backend + Frontend)
 
-1) Clone
+**1) Clone**
+~~~bash
 git clone https://github.com/mr-fantastic97/Mue-Heroes.git
 cd Mue-Heroes
+~~~
 
-2) Create env files (dev-only example keys replace locally, do not share in prod.)
+**2) Create env files (dev-only)**
 
-backend/.env
-
-mkdir -p backend
-
-cat > backend/.env <<'EOF'
-
+- `backend/.env`
+~~~ini
 CORS_ORIGINS=http://localhost:5173
-
 MUE_SECRET=dev-submit-key
 ADMIN_TOKEN=dev-admin-key
 NODE_ENV=development
-EOF
+~~~
 
-frontend/mue-heroes-react/.env.local
-
-mkdir -p frontend/mue-heroes-react
-
-cat > frontend/mue-heroes-react/.env.local <<'EOF'
-
+- `frontend/mue-heroes-react/.env.local`
+~~~ini
 VITE_API_URL=http://localhost:8000
 VITE_DEV_SUBMIT_KEY=dev-submit-key
 VITE_DEV_ADMIN_TOKEN=dev-admin-key
+VITE_DEMO_MODE=true
+~~~
 
-VITE_DEMO_MODE=true     
-VITE_DEMO_MODE=false  
-EOF
+**3) Run**
 
-3) Run backend (terminal A)
-
+- **Terminal A (backend)**
+~~~bash
 cd backend
+cargo run --bin backend   # http://localhost:8000
+~~~
 
-cargo run --bin backend
--> http://localhost:8000  (leave this running)
-
-4) Run frontend (terminal B)
-
-cd ../frontend/mue-heroes-react
-
+- **Terminal B (frontend)**
+~~~bash
+cd frontend/mue-heroes-react
 npm install
-npm run dev
--> http://localhost:5173
+npm run dev               # http://localhost:5173
+~~~
 
-5) Have Fun !!!
+**Notes**
+- Keep `.env` files out of git.
+- If you change ports, update both `CORS_ORIGINS` (backend) and `VITE_API_URL` (frontend).

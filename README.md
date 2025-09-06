@@ -53,14 +53,22 @@ cd Mue-Heroes
 2) Create env files with safe local values
 
 **Backend env -> backend/.env**
+
+
 mkdir -p backend
 cat > backend/.env <<'EOF'
 
 **Frontend origin allowed by CORS (Vite default)**
+
+
 CORS_ORIGINS=http://localhost:5173
 
 **Dev-only example keys - replace with your own local values. (PLEASE DO NOT EXPOSE IN PROD!)**
+
+
 **Client sends X-MUE-KEY with this exact value**
+
+
 MUE_SECRET=dev-submit-key
 
 **Client sends X-ADMIN-KEY with this value**

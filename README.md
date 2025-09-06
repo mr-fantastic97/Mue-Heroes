@@ -44,8 +44,6 @@ Mine/Witness events are submitted as commands and scored by a local rule engine.
 
 ---
 
-## 🛠 Dev Quickstart (Backend + Frontend)
-
 # 1) Clone
 git clone https://github.com/mr-fantastic97/Mue-Heroes.git
 cd Mue-Heroes

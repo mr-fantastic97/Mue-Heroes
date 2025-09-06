@@ -3,10 +3,10 @@
 
 #![allow(dead_code)]
 
-/// Metadata that travels with every command (e.g., block time).
+/// Metadata that travels with every command (ex: block time).
 #[derive(Debug, Clone, Copy)]
 pub struct PayloadMetadata {
-    pub accepting_time: u64, // unix seconds (or millis if you prefer)
+    pub accepting_time: u64, // unix seconds 
 }
 
 /// Errors an Episode can return.
@@ -16,7 +16,7 @@ pub enum EpisodeError<E> {
     InternalError(String),
 }
 
-/// A stateful, per-session/per-wallet “episode” of your game.
+/// A stateful, per-session/per-wallet “episode” of game.
 pub trait Episode {
     type Command;
     type CommandError;

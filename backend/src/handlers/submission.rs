@@ -1,3 +1,5 @@
+//backend > src > handlers > submissions.rs
+
 use axum::{extract::{State, Json}, http::HeaderMap};
 use serde::{Deserialize, Serialize};
 use std::{
@@ -59,6 +61,7 @@ pub async fn handle_submission(
     let pubkey = PubKey::new(pk_arr);
 
     let event = SuperblockEvent {
+        wallet: payload.wallet.clone(),
         mu_level: payload.mu_level,
         is_witness: payload.event_type == "witness",
         merkle_root: None,

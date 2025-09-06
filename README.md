@@ -46,62 +46,40 @@ Mine/Witness events are submitted as commands and scored by a local rule engine.
 
 ## 🛠 Dev Quickstart (Backend + Frontend)
 
-1) Clone
+# 1) Clone
 git clone https://github.com/mr-fantastic97/Mue-Heroes.git
 cd Mue-Heroes
 
-2) Create env files with safe local values
+# 2) Create env files (dev-only example keys replace locally, do not share in prod.)
 
-**Backend env -> backend/.env**
-
-
+# backend/.env
 mkdir -p backend
 cat > backend/.env <<'EOF'
-
-**Frontend origin allowed by CORS (Vite default)**
-
-
 CORS_ORIGINS=http://localhost:5173
-
-**Dev-only example keys - replace with your own local values. (PLEASE DO NOT EXPOSE IN PROD!)**
-
-
-**Client sends X-MUE-KEY with this exact value**
-
-
 MUE_SECRET=dev-submit-key
-
-**Client sends X-ADMIN-KEY with this value**
 ADMIN_TOKEN=dev-admin-key
-
 NODE_ENV=development
 EOF
 
-**Frontend env -> frontend/mue-heroes-react/.env.local**
+# frontend/mue-heroes-react/.env.local
 mkdir -p frontend/mue-heroes-react
 cat > frontend/mue-heroes-react/.env.local <<'EOF'
-**Where the UI calls the backend**
 VITE_API_URL=http://localhost:8000
-
-**Must match backend MUE_SECRET**
 VITE_DEV_SUBMIT_KEY=dev-submit-key
-
-**Must match backend ADMIN_TOKEN**
 VITE_DEV_ADMIN_TOKEN=dev-admin-key
-
-**Optional demo toggle (uncomment one)**
-VITE_DEMO_MODE=true
-**VITE_DEMO_MODE=false**
+VITE_DEMO_MODE=true     # show Dev Sandbox
+# VITE_DEMO_MODE=false  # hide Dev Sandbox
 EOF
 
-3) Run backend (terminal A)
+# 3) Run backend (terminal A)
 cd backend
 cargo run --bin backend
+# -> http://localhost:8000  (leave this running)
 
-4) Run frontend (terminal B)
+# 4) Run frontend (terminal B)
 cd ../frontend/mue-heroes-react
 npm install
 npm run dev
+# -> http://localhost:5173
 
-
-5) Have Fun !!!
+# 5) Have Fun !!!

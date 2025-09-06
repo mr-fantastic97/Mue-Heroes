@@ -52,17 +52,24 @@ cd Mue-Heroes
 2) Create env files (dev-only example keys replace locally, do not share in prod.)
 
 backend/.env
+
 mkdir -p backend
+
 cat > backend/.env <<'EOF'
+
 CORS_ORIGINS=http://localhost:5173
+
 MUE_SECRET=dev-submit-key
 ADMIN_TOKEN=dev-admin-key
 NODE_ENV=development
 EOF
 
 frontend/mue-heroes-react/.env.local
+
 mkdir -p frontend/mue-heroes-react
+
 cat > frontend/mue-heroes-react/.env.local <<'EOF'
+
 VITE_API_URL=http://localhost:8000
 VITE_DEV_SUBMIT_KEY=dev-submit-key
 VITE_DEV_ADMIN_TOKEN=dev-admin-key
@@ -72,12 +79,16 @@ VITE_DEMO_MODE=false
 EOF
 
 3) Run backend (terminal A)
+
 cd backend
+
 cargo run --bin backend
 -> http://localhost:8000  (leave this running)
 
 4) Run frontend (terminal B)
+
 cd ../frontend/mue-heroes-react
+
 npm install
 npm run dev
 -> http://localhost:5173

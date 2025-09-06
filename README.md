@@ -51,7 +51,7 @@ git clone https://github.com/mr-fantastic97/Mue-Heroes.git
 cd Mue-Heroes
 ~~~
 
-**2) Create env files (dev-only)**
+**2) Create env files (dev-only example keys, replace locally)**
 
 - `backend/.env`
 ~~~ini
